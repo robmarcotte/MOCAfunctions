@@ -1,11 +1,11 @@
-# automerge_ag_do_data
+# AG_DO_merge
 #
 # Function to automate the process of merging ActiGraph and Noldus direct observation data
 # Note: do_screen as 'sequential' can only be completed if doparallel is FALSE. Otherwise, it has to be done as batch
 #
 # Library dependencies: foreach, doParallel, stringr, lubridate, dplyr, tidyr
 
-automerge_ag_do_data = function(ag_filepaths = NA, do_filepaths = NA, timestamps = NA, unique_indicator = NA,
+AG_DO_merge = function(ag_filepaths = NA, do_filepaths = NA, timestamps = NA, unique_indicator = NA,
                                 output_filepath = NA, visual_plots = TRUE,
                                 do_screen = c('none','sequential','batch'), doparallel = TRUE, cores = NA){
 
