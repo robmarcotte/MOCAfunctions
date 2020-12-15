@@ -23,25 +23,25 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
                       'custom' = readRDS(do_fix_custom_filepath))
 
   # Parallel operations for a later date - RM 12/15/2020
-  # if(runparallel == TRUE){
-  #
-  #   cores = ifelse(is.na(cores), detectCores()/2, cores)
-  #
-  #   if(cores > detectCores()){
-  #     warning('Desired number of cores is greater than actual cores available on machine. Running parallel processes using the actual cores available on machine.')
-  #   }
-  # } else {
-  #   cores = 1
-  # }
-  #
-  # cl = makeCluster(cores)
-  #
-  # registerDoParallel(cl)
+  if(runparallel == TRUE){
+
+    cores = ifelse(is.na(cores), detectCores()/2, cores)
+
+    if(cores > detectCores()){
+      warning('Desired number of cores is greater than actual cores available on machine. Running parallel processes using the actual cores available on machine.')
+    }
+  } else {
+    cores = 1
+  }
+
+  cl = makeCluster(cores)
+
+  registerDoParallel(cl)
 
   # Parallel operations for a later date - RM 12/15/2020
-  # foreach(iii = 1:length(do_time_indicator), .packages = c('tidyr','stringr','lubridate','dplyr', 'readxl', 'doParallel','foreach','data.table')) %dopar% {
+  foreach(iii = 1:length(do_time_indicator), .packages = c('tidyr','stringr','lubridate','dplyr', 'readxl', 'doParallel','foreach','data.table')) %dopar% {
 
-  for(iii in 1:length(do_time_indicator)){
+  # for(iii in 1:length(do_time_indicator)){
     ag_index = str_which(ag_filepaths, ag_do_indicator[iii])
     do_index = str_which(do_filepaths, ag_do_indicator[iii])
     time_index = str_which(timestamps$participant, do_time_indicator[iii])
@@ -106,6 +106,6 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
 
 
   # Parallel operations for a later date - RM 12/15/2020
-  # stopCluster(cl)
+  stopCluster(cl)
 
 }
