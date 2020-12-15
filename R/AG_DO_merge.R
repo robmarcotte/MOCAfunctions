@@ -4,6 +4,7 @@
 # Note: do_screen as 'sequential' can only be completed if runparallel is FALSE. Otherwise, it has to be done as batch
 # Assumes that screening of observations has already occurred and either a default do_fix data or a custom filepath with how to approach novel observations is provided. See DO_screen for further details.
 #
+# Creating a difference to force a commit update
 # Library dependencies: foreach, doParallel, stringr, lubridate, dplyr, tidyr, data.table, readxl
 
 AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator, ag_do_indicator, samp_freq = 80,
