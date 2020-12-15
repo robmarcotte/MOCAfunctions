@@ -4,9 +4,9 @@
 # Note: do_screen as 'sequential' can only be completed if runparallel is FALSE. Otherwise, it has to be done as batch
 # Assumes that screening of observations has already occurred and either a default do_fix data or a custom filepath with how to approach novel observations is provided. See DO_screen for further details.
 #
-# Library dependencies: foreach, doParallel, stringr, lubridate, dplyr, tidyr
+# Library dependencies: foreach, doParallel, stringr, lubridate, dplyr, tidyr, data.table
 
-AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator, ag_do_indicator,
+AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator, ag_do_indicator, samp_freq = 80,
                        do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'), do_fix_custom_filepath,
                        output_filepath, visual_plots = TRUE,
                        runparallel = TRUE, cores = 1){
@@ -28,8 +28,7 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
     if(cores > detectCores()){
       warning('Desired number of cores is greater than actual cores available on machine. Running parallel processes using the actual cores available on machine.')
     }
-  }
-  else {
+  } else {
     cores = 1
   }
 
@@ -53,7 +52,7 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
       noldus_data = DO_timestamp(noldus_data, session_start_time)
       noldus_data$index = rep(seq(1, ceiling(nrow(noldus_data)/100)), each = 100)[1:nrow(noldus_data)]
 
-      noldus_data = data.frame(Participant = unique_indicator[iii],
+      noldus_data = data.frame(Participant = do_time_indicator[iii],
                                Date = session_date,
                                Time = noldus_data$Time[seq(1, (nrow(noldus_data))+1, by = 100)][1:length(unique(noldus_data$index))],
                                Behavior = tapply(noldus_data$Behavior, INDEX = noldus_data$index, FUN = majority_string),
@@ -62,21 +61,7 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
                                Modifier_3 = tapply(noldus_data$Modifier_3, INDEX = noldus_data$index, FUN = majority_string),
                                MET.level = tapply(noldus_data$MET.level, INDEX = noldus_data$index, FUN = majority_string))
 
-      cleaned_data = DO_cleaning_18to20(noldus_data, do_fix)
-      noldus_data$Behavior = cleaned_data$Behavior
-      noldus_data$METs = cleaned_data$Modifier1
-      noldus_data$Modifier_2 = cleaned_data$Modifier2
-
-      noldus_data = left_join(noldus_data, do_fix)
-      noldus_data$Modifier_2 = ifelse(noldus_data$Modifier_2 == 'Quiet', noldus_data$Behavior, noldus_data$Modifier_2)
-
-      noldus_data$Omit_me = 0
-
-      if(is.na(any(noldus_data$Reason != 0))| any(noldus_data$Reason != 0) == T){
-        noldus_data$METs = ifelse(str_detect(noldus_data$Reason, 'MET') == T,
-                                  ifelse(!is.na(noldus_data$MET_Fix), noldus_data$MET_Fix, noldus_data$METs), noldus_data$METs)
-        noldus_data$Omit_me = ifelse(str_detect(noldus_data$Reason, 'Behav/Act')== T, 1, 0)
-      }
+      noldus_data = DO_cleaning_18to20(noldus_data, do_fix)
 
       noldus_data$Time = strip_time_from_fulldate(noldus_data$Time)
 
@@ -87,21 +72,26 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
       noldus_data = noldus_data %>% select(Date, Time, Behavior, METs, Modifier_2, Omit_me) %>% dplyr::rename(Modifier_1 = METs) %>%
         mutate(Date = as.character(Date), Time =as.character(Time))
 
-      do_name_append = str_split(str_split(do_filepaths[do_index[jjj]], unique_indicator[iii], simplify = T)[,2], '\\.', simplify = T)[,1]
+      do_name_append = str_split(do_time_indicator[iii], ag_do_indicator[iii], simplify = T)[,2]
 
       # Read in ActiGraph data, append DO data, export
       for(aaa in 1:length(ag_index)){
-        ag_data = read_ag(ag_filepaths[ag_index[aaa]])
+        ag_data = read_ag(ag_filepaths[ag_index[aaa]], ENMO_calibrate = F, device_serial_calibrate = F)
 
         ag_data = ag_data %>% dplyr::mutate(Full_date = ymd_hms(str_c(Date, Time, sep = ' '))) %>%
           filter(inrange(Full_date, noldus_start, noldus_end_raw))%>% select(-Full_date)
-        ag_data = ag_data[-nrow(ag_data),]
+        if(nrow(ag_data)%%samp_freq!=0){
+          excess_remainder = nrow(ag_data)%%samp_freq
+          ag_data = ag_data[-((nrow(ag_data)-excess_remainder):nrow(ag_data)),]
+        }
+
+
         ag_data = left_join(ag_data, noldus_data)
-        ag_data = cbind(Participant = unique_indicator[iii], ag_data)
+        ag_data = cbind(Participant = do_time_indicator[iii], ag_data)
 
-        ag_name_append = str_replace(ag_filepaths[ag_index[aaa]], unique_indicator[iii],'')
+        ag_name_append = str_replace(str_split(basename(ag_filepaths[ag_index[aaa]]), '\\.', simplify = T)[,1], ag_do_indicator[iii], '')
 
-        saveRDS(paste(output_filepath, '/', unique_indicator, do_name_append, ag_name_append, '.rds', sep = ''))
+        saveRDS(ag_data, paste(output_filepath, '/', ag_do_indicator[iii], do_name_append, ag_name_append, '.rds', sep = ''))
 
       }
     }
