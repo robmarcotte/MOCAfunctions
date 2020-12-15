@@ -95,7 +95,7 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
         saveRDS(ag_data, paste(output_filepath, '/', ag_do_indicator[iii], do_name_append, ag_name_append, '.rds', sep = ''))
 
         if(visual_plots == T){
-          # Insert AG and DO visualization code
+          # Insert AG and DO visualization code from MOCA
         }
       }
     }
