@@ -10,7 +10,7 @@
 AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator, ag_do_indicator, samp_freq = 80,
                        do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'), do_fix_custom_filepath,
                        output_filepath, visual_plots = TRUE,
-                       runparallel = TRUE, cores = 1){
+                       runparallel = TRUE, cores = NA){
 
   do_fix = switch(do_fix_reference,
                       '18to20' = do_fix_18to20,
