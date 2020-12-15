@@ -95,7 +95,7 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
     file_data = mutate(file_data, VM = sqrt(Axis1^2 + Axis2^2 + Axis3^2))
   }
 
-  Dates = as.character(date(Timestamp))
+  Dates = as.character(lubridate::date(Timestamp))
   Hour = as.character(hour(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
   Minute = as.character(minute(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
   Second = as.character(second(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
