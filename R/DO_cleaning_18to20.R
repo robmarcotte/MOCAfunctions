@@ -5,7 +5,7 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix){
 
   # MOCA 18to20 Noldus template had a typo for WalkLoad. Replace WalkLoad periods with proper format
   noldus_data$Behavior = str_replace(noldus_data$Behavior, pattern = 'WalkLoad ', replacement = 'WalkLoad (')
-  noldus_data$Modifier_2 = str_replace(noldus_data$Behavior, pattern = 'Carrying Small Child 2.3) ', replacement = 'Carrying Small Child (2.3)')
+  noldus_data$Modifier_2 = str_replace(noldus_data$Behavior, pattern = 'Carrying Small Child 2.3\\) ', replacement = 'Carrying Small Child (2.3)')
 
   # Create a new data frame that will be used as a reference for cleaned noldus data
   clean_behavior_activity = data.frame(Behavior = str_split(noldus_data$Behavior, ' \\(', simplify = T)[,1],
@@ -71,6 +71,10 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix){
   noldus_data$Behavior = clean_behavior_activity$Behavior
   noldus_data$METs = clean_behavior_activity$Modifier1
   noldus_data$Modifier_2 = clean_behavior_activity$Modifier2
+
+  # Change column name of manual_fix Coded_MET_Value to METs
+  manual_fix = manual_fix %>% rename(METs = Coded_MET_Value,
+                                     Modifier_2 = Activity)
 
   noldus_data = left_join(noldus_data, manual_fix)
   noldus_data$Modifier_2 = ifelse(noldus_data$Modifier_2 == 'Quiet', noldus_data$Behavior, noldus_data$Modifier_2)
