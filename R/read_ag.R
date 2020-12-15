@@ -96,11 +96,19 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
   }
 
   Dates = as.character(date(Timestamp))
+<<<<<<< HEAD
+=======
+  Time = strip_time_from_fulldate(Timestamp)
+>>>>>>> 7d34cf3b5d95820f2aac1f2eb793ae7f23516954
   Hour = as.character(hour(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
   Minute = as.character(minute(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
   Second = as.character(second(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
 
   ag_data = cbind(Dates,paste(Hour,Minute,Second,sep = ':'),file_data, stringsAsFactors = F)
+<<<<<<< HEAD
+=======
+  # ag_data = cbind(Dates,Time,file_data, stringsAsFactors = F)
+>>>>>>> 7d34cf3b5d95820f2aac1f2eb793ae7f23516954
 
   if(epoch<1){
     if(ENMO_calibrate == T){
