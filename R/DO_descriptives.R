@@ -13,7 +13,7 @@
 
 DO_descriptives = function(noldus_data, column_METs = 'Modifier_1', read_first = T){
   if(read_first == T & is.character(noldus_data))
-    noldus_data = read_xlsx(noldus_data)
+    noldus_data = readxl::read_xlsx(noldus_data)
 
   noldus_data <- noldus_data[noldus_data$Event_Type=="State start",] # remove all stop times since they're 0 duration
 
