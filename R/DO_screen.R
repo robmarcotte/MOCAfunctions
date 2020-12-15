@@ -2,9 +2,9 @@
 #
 # Function to screen Noldus direct observation data by comparing against a reference data frame of previously observed errors
 #
-# Library dependencies:
+# Library dependencies: none
 
-DO_screen = function(runparallel = T, do_screen = c('none','sequential','batch'), do_error_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'), do_error_custom_filepath = NA, do_screen = c('interactive','.csv')){
+DO_screen = function(runparallel = T, do_filescreen_approach = c('sequential','batch'), do_error_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'), do_error_custom_filepath = NA, do_screen = c('interactive','.csv')){
 
   if(runparallel == T & do_screen == 'batch'){
     do_data = foreach(iii = 1:length(do_filepaths), .packages = c('MOCAfunctions','tidyr','stringr','lubridate','dplyr'),
