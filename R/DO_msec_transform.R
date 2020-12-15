@@ -17,8 +17,12 @@ DO_msec_transform <- function(noldus_data){
                          METs=as.numeric(rep(DO.data.1$METs,times=secs)), stringsAsFactors = F)
 
   modifiers = str_which(colnames(noldus_data), 'Modifier')
+
   for(i in 1:length(modifiers)){
-    modifier_data = as.character(rep(DO.data.1[,modifiers[i]], times=secs))
+    modifier_data = as.vector(DO.data.1[,modifiers[i]])
+    modifier_data[which(is.na(modifier_data)),] = 'NA'
+
+    modifier_data <- rep(unlist(modifier_data), times=secs)
     big.DO.1 = bind_cols(big.DO.1, as.character(modifier_data))
     colnames(big.DO.1)[ncol(big.DO.1)] = colnames(noldus_data)[modifiers[i]]
   }

@@ -4,12 +4,12 @@
 # Note: do_screen as 'sequential' can only be completed if runparallel is FALSE. Otherwise, it has to be done as batch
 # Assumes that screening of observations has already occurred and either a default do_fix data or a custom filepath with how to approach novel observations is provided. See DO_screen for further details.
 #
-# Library dependencies: foreach, runparallel, stringr, lubridate, dplyr, tidyr
+# Library dependencies: foreach, doParallel, stringr, lubridate, dplyr, tidyr
 
-AG_DO_merge = function(ag_filepaths = NA, do_filepaths = NA, timestamps = NA, unique_indicator = NA,
-                       do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'), do_fix_custom_filepath = NA,
-                       output_filepath = NA, visual_plots = TRUE,
-                       runparallel = TRUE, cores = NA){
+AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator, ag_do_indicator,
+                       do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'), do_fix_custom_filepath,
+                       output_filepath, visual_plots = TRUE,
+                       runparallel = TRUE, cores = 1){
 
   do_fix = switch(do_fix_reference,
                       '18to20' = do_fix_18to20,
@@ -38,10 +38,10 @@ AG_DO_merge = function(ag_filepaths = NA, do_filepaths = NA, timestamps = NA, un
   registerDoParallel(cl)
 
 
-  foreach(iii = 1:length(unique_indicator), .packages = c('tidyr','stringr','lubridate','dplyr')) %dopar% {
-    ag_index = str_which(ag_filepaths, unique_indicator[iii])
-    do_index = str_which(do_filepaths, unique_indicator[iii])
-    time_index = str_which(timestamps$participant, unique_indicator[iii])
+  foreach(iii = 1:length(do_time_indicator), .packages = c('tidyr','stringr','lubridate','dplyr')) %dopar% {
+    ag_index = str_which(ag_filepaths, ag_do_indicator[iii])
+    do_index = str_which(do_filepaths, ag_do_indicator[iii])
+    time_index = str_which(timestamps$participant, do_time_indicator[iii])
 
     session_start_time = timestamps$start[time_index]
     session_date = ymd(timestamps$date[time_index])
