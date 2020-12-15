@@ -96,7 +96,6 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
   }
 
   Dates = as.character(date(Timestamp))
-  Time = strip_time_from_fulldate(Timestamp)
   Hour = as.character(hour(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
   Minute = as.character(minute(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
   Second = as.character(second(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
