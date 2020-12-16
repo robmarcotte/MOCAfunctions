@@ -12,7 +12,7 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
                        output_filepath, visual_plots = TRUE,
                        runparallel = FALSE, cores = NA){
 
-  if(length(do_time_indicator) != lengths(do_filepaths)){
+  if(length(do_time_indicator) != length(do_filepaths)){
     stop('Number of do_filepaths supplied do not equal the do_time_indicator. This will result in errors, please check them to make sure every filepath has a timestamp indicator present.')
     }
 
