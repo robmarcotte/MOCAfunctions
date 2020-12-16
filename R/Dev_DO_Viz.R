@@ -8,7 +8,7 @@ Dev_DO_Viz = function(rds_filepaths, output_filepath, overwrite = T){
 
   plot_folder_exist = dir.exists(paste(output_filepath, '/Visual Inspection Plots', sep = ''))
 
-  if(plot_folder_exist == T & overwrite = F){
+  if(plot_folder_exist == T & overwrite == F){
 
     stop('Found an existing folder with Visual Inspection Plots in the designated output_filepath location. \nTo preserve prior plots, rename the existing folder.')
 
