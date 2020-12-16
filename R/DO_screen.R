@@ -169,6 +169,16 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
     need_to_screen$Combo_error = ''
     need_to_screen$MET_Fix = NA
 
+    # Remove duplicates
+    need_to_screen$duplicate_check = str_c(need_to_screen$Behavior, need_to_screen$Modifier2, need_to_screen$Modifier1, need_to_screen$Behavior_Compendium_MET, need_to_screen$Activity_Compendium_MET,
+                                           sep = '_')
+    duplicates = which(duplicated(need_to_screen$duplicate_check) == T)
+
+    if(length(duplicates)>0)
+      need_to_screen = need_to_screen[-duplicates,]
+
+    need_to_screen = need_to_screen %>% select(-duplicate_check)
+
     if(do_screen == 'interactive'){
 
       met_errors = which(need_to_screen$MET_error == 1)
@@ -200,9 +210,11 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
     }
 
     if(do_screen == '.csv'){
+
+      need_to_screen$MET_Fix = ifelse(need_to_screen$MET_error == 1, 'NEED A MET VALUE FIX', NA)
       write.table(need_to_screen,
                   file = paste(dirname(do_fix_custom_filepath), '000 New Combinations for screening.csv', sep = '/'),
-                  sep = ',', col.names = T, row.names = F)
+                  sep = ',', col.names = T, row.names = F, na = '')
 
       status = 'stop'
       while(status != 'Ready'){
