@@ -133,7 +133,8 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
               labs(title = paste(ag_do_indicator[iii], do_name_append, ag_name_append, sep = ''), x = 'Time (secs)',y = 'Acceleration (average g/1-sec)')
 
             ggsave(paste(output_filepath, '/Visual Inspection Plots',  '/', ag_do_indicator[iii], do_name_append, ag_name_append,'.png', sep = ''), device = 'png',height = 8, width = 10.5)
-          } else {
+          }
+          else {
             behavior = unique(ag_data$Behavior)
             ggplot(data = ag_data, aes(x = seconds, y = Acceleration, color = Signal)) +
               geom_rect(inherit.aes = F, aes(xmin = seconds, xmax = seconds+1, ymin = min(ag_data$Acceleration), ymax = max(ag_data$Acceleration), fill = Modifier_2), alpha = 0.2) +
@@ -147,8 +148,8 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
 
     }
 
-
     # Parallel operations for a later date - RM 12/15/2020
     stopCluster(cl)
+    }
   }
 }
