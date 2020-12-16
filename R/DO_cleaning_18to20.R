@@ -58,7 +58,7 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix){
     noldus_data$Omit_me = ifelse(str_detect(noldus_data$Reason, 'Behav/Act')== T, 1, 0)
   }
 
-  noldus_data = noldus_data %>% select(-Reason, -MET_Fix)
+  noldus_data = noldus_data %>% select(-Behavior_Compendium_MET:duplicate_check)
 
   return(noldus_data)
 }

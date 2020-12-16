@@ -39,9 +39,9 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
   registerDoParallel(cl)
 
   # Parallel operations for a later date - RM 12/15/2020
-  foreach(iii = 1:length(ag_do_indicator), .packages = c('tidyr','stringr','lubridate','dplyr', 'readxl', 'doParallel','foreach','data.table')) %dopar% {
+  # foreach(iii = 1:length(ag_do_indicator), .packages = c('tidyr','stringr','lubridate','dplyr', 'readxl', 'doParallel','foreach','data.table')) %dopar% {
 
-  # for(iii in 1:length(do_time_indicator)){
+  for(iii in 1:length(do_time_indicator)){
     ag_index = str_which(ag_filepaths, ag_do_indicator[iii])
     do_index = str_which(do_filepaths, ag_do_indicator[iii])
 
@@ -68,7 +68,7 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
 
       noldus_data =  MOCAfunctions::DO_cleaning_18to20(noldus_data, do_fix)
 
-      noldus_data$Time =  MOCAfunctions::strip_time_from_fulldate(noldus_data$Time)
+      # noldus_data$Time =  MOCAfunctions::strip_time_from_fulldate(noldus_data$Time)
 
       noldus_start = ymd_hms(str_c(noldus_data$Date[1], noldus_data$Time[1]))
       noldus_end_raw = ymd_hms(str_c(noldus_data$Date[1], noldus_data$Time[nrow(noldus_data)])) + seconds(1)
@@ -80,7 +80,8 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
       do_name_append = str_split(do_time_indicator[jjj], ag_do_indicator[iii], simplify = T)[,2]
 
       # Read in ActiGraph data, append DO data, export
-      for(aaa in 1:length(ag_index)){
+      foreach(aaa = 1:length(ag_index), .packages = c('tidyr','stringr','lubridate','dplyr', 'readxl', 'doParallel','foreach','data.table', 'MOCAfunctions')) %dopar% {
+      # for(aaa in 1:length(ag_index)){
         ag_data = read_ag(ag_filepaths[ag_index[aaa]], ENMO_calibrate = F, device_serial_calibrate = F)
 
         ag_data = ag_data %>% dplyr::mutate(Full_date = ymd_hms(str_c(Date, Time, sep = ' '))) %>%
