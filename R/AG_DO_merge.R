@@ -12,6 +12,16 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
                        output_filepath, visual_plots = TRUE,
                        runparallel = FALSE, cores = NA){
 
+  if(visual_plots == T){
+    plot_folder_exist = dir.exists(paste(output_filepath, '/Visual Inspection Plots', sep = ''))
+
+    if(plot_folder_exist == T){
+      warning('Found an existing folder with Visual Inspection Plots in the designated output_filepath location. \nTo preserve prior plots, rename the existing folder. \nOverwriting plot contents by default...')
+    } else {
+      dir.create(paste(output_filepath, '/Visual Inspection Plots', sep = ''), showWarnings = F)
+    }
+  }
+
   if(length(do_time_indicator) != length(do_filepaths)){
     stop('Number of do_filepaths supplied do not equal the do_time_indicator. This will result in errors, please check them to make sure every filepath has a timestamp indicator present.')
     }
@@ -105,13 +115,6 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
         saveRDS(ag_data, paste(output_filepath, '/', ag_do_indicator[iii], do_name_append, ag_name_append, '.rds', sep = ''))
 
         if(visual_plots == T){
-          plot_folder_exist = dir.exists(paste(output_filepath, '/Visual Inspection Plots', sep = ''))
-
-          if(plot_folder_exist == T){
-            warning('Found an existing folder with Visual Inspection Plots in the designated output_filepath location. \nTo preserve prior plots, rename the existing folder. \nOverwriting plot contents by default...')
-          } else {
-            dir.create(paste(output_filepath, '/Visual Inspection Plots', sep = ''), showWarnings = F)
-          }
 
           ag_data$seconds = floor(seq(0,nrow(ag_data)/samp_freq, by = 1/samp_freq)[1:nrow(ag_data)])
 
