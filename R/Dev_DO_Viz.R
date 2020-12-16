@@ -8,23 +8,20 @@ Dev_DO_Viz = function(rds_filepaths, output_filepath, overwrite = T, samp_freq =
 
   plot_folder_exist = dir.exists(paste(output_filepath, '/Visual Inspection Plots', sep = ''))
 
+  if(plot_folder_exist == F)
+    dir.create(paste(output_filepath, '/Visual Inspection Plots', sep = ''), showWarnings = F)
+
   if(plot_folder_exist == T & overwrite == F){
 
     stop('Found an existing folder with Visual Inspection Plots in the designated output_filepath location. \nTo preserve prior plots, rename the existing folder.')
 
   } else {
 
-    if(plot_folder_exist == T){
-      warning('Found an existing folder with Visual Inspection Plots in the designated output_filepath location. \nTo preserve prior plots, rename the existing folder.\nOverwriting plot contents by default...')
-    }
-
-    dir.create(paste(output_filepath, '/Visual Inspection Plots', sep = ''), showWarnings = F)
-
     for(dddd in 1:length(rds_filepaths)){
 
       dev_data = readRDS(rds_filepaths[dddd])
 
-      filename = str_replace(rds_filepaths[dddd], pattern = '.rds', '')
+      filename = str_replace(basename(rds_filepaths[dddd]), pattern = '.rds', '')
 
       dev_data$seconds = floor(seq(0,nrow(dev_data)/samp_freq, by = 1/samp_freq)[1:nrow(dev_data)])
 
