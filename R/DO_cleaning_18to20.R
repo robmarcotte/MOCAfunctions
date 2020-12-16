@@ -12,6 +12,8 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix){
   if(any(nums == '', na.rm = T)){
     nums = nums[-which(nums =='')]
   }
+  if(length(nums) == 0)
+    nums = 'UNIQUE NO NUMS'
   behavior = str_replace_all(noldus_data$Behavior, paste(nums, collapse = '|'), '')
   behavior = str_trim(str_replace_all(behavior, '[:punct:]', ''))
 
@@ -24,6 +26,8 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix){
   if(any(nums == '', na.rm = T)){
     nums = nums[-which(nums =='')]
   }
+  if(length(nums) == 0)
+    nums = 'UNIQUE NO NUMS'
   modifier2 = str_replace_all(noldus_data$Modifier_2, paste(nums, collapse = '|'), '')
   modifier2 = str_trim(str_replace_all(modifier2, '[:punct:]', ''))
 

@@ -57,6 +57,8 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
                         if(any(nums == '', na.rm = T)){
                           nums = nums[-which(nums =='')]
                         }
+                        if(length(nums) == 0)
+                          nums = 'UNIQUE NO NUMS'
                         behavior = str_replace_all(noldus_data$Behavior, paste(nums, collapse = '|'), '')
                         behavior = str_trim(str_replace_all(behavior, '[:punct:]', ''))
 
@@ -69,6 +71,8 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
                         if(any(nums == '', na.rm = T)){
                           nums = nums[-which(nums =='')]
                         }
+                        if(length(nums) == 0)
+                          nums = 'UNIQUE NO NUMS'
                         modifier2 = str_replace_all(noldus_data$Modifier_2, paste(nums, collapse = '|'), '')
                         modifier2 = str_trim(str_replace_all(modifier2, '[:punct:]', ''))
 
@@ -105,7 +109,11 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
 
     # Parse the compendium values from the coded behaviors and modifiers
     nums = c(unique(str_extract_all(noldus_data$Behavior, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)))
-    nums = nums[-which(nums =='')]
+    if(any(nums == '', na.rm = T)){
+      nums = nums[-which(nums =='')]
+    }
+    if(length(nums) == 0)
+      nums = 'UNIQUE NO NUMS'
     behavior = str_replace_all(noldus_data$Behavior, paste(nums, collapse = '|'), '')
     behavior = str_trim(str_replace_all(behavior, '[:punct:]', ''))
 
@@ -115,7 +123,11 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
     behavior_compendium = str_replace_all(behavior_compendium, ', NA', '')
 
     nums = c(unique(str_extract_all(noldus_data$Modifier_2, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)))
-    nums = nums[-which(nums =='')]
+    if(any(nums == '', na.rm = T)){
+      nums = nums[-which(nums =='')]
+    }
+    if(length(nums) == 0)
+      nums = 'UNIQUE NO NUMS'
     modifier2 = str_replace_all(noldus_data$Modifier_2, paste(nums, collapse = '|'), '')
     modifier2 = str_trim(str_replace_all(modifier2, '[:punct:]', ''))
 
