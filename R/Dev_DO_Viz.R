@@ -4,7 +4,7 @@
 #
 # Library dependencies: ggplot2, dplyr, tidyr, stringr
 
-Dev_DO_Viz = function(rds_filepaths, output_filepath, overwrite = T){
+Dev_DO_Viz = function(rds_filepaths, output_filepath, overwrite = T, samp_freq = 80){
 
   plot_folder_exist = dir.exists(paste(output_filepath, '/Visual Inspection Plots', sep = ''))
 
