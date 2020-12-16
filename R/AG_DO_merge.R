@@ -130,21 +130,21 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
 
           if(length(unique(ag_data$Behavior)) >1){
 
-            ggplot(data = ag_data, aes(x = seconds, y = Acceleration, color = Signal)) +
+            plot_data = ggplot(data = ag_data, aes(x = seconds, y = Acceleration, color = Signal)) +
               geom_rect(inherit.aes = F, aes(xmin = seconds, xmax = seconds+1, ymin = min(ag_data$Acceleration), ymax = max(ag_data$Acceleration), fill = Behavior), alpha = 0.2) +
               geom_line(alpha = 0.6) + scale_color_manual(values = c('red','blue','green','black')) + theme_minimal() +
               labs(title = paste(ag_do_indicator[iii], do_name_append, ag_name_append, sep = ''), x = 'Time (secs)',y = 'Acceleration (average g/1-sec)')
 
-            ggsave(paste(output_filepath, '/Visual Inspection Plots',  '/', ag_do_indicator[iii], do_name_append, ag_name_append,'.png', sep = ''), device = 'png',height = 8, width = 10.5)
+            ggsave(plot = plot_data, filename = paste(output_filepath, '/Visual Inspection Plots',  '/', ag_do_indicator[iii], do_name_append, ag_name_append,'.png', sep = ''), device = 'png',height = 8, width = 10.5)
           }
           else {
             behavior = unique(ag_data$Behavior)
-            ggplot(data = ag_data, aes(x = seconds, y = Acceleration, color = Signal)) +
+            plot_data = ggplot(data = ag_data, aes(x = seconds, y = Acceleration, color = Signal)) +
               geom_rect(inherit.aes = F, aes(xmin = seconds, xmax = seconds+1, ymin = min(ag_data$Acceleration), ymax = max(ag_data$Acceleration), fill = Modifier_2), alpha = 0.2) +
               geom_line(alpha = 0.6) + scale_color_manual(values = c('red','blue','green','black')) + theme_minimal() +
-              labs(title = str_c(current_session, ' (Behavior: ', behavior, ')', sep = ''), x = 'Time (secs)',y = 'Acceleration (average g/1-sec)')
+              labs(title = str_c(paste(ag_do_indicator[iii], do_name_append, ag_name_append, sep = ''), ' (Behavior: ', behavior, ')', sep = ''), x = 'Time (secs)',y = 'Acceleration (average g/1-sec)')
 
-            ggsave(paste(output_filepath, '/Visual Inspection Plots',  '/', ag_do_indicator[iii], do_name_append, ag_name_append,'.png', sep = ''), device = 'png',height = 8, width = 10.5)
+            ggsave(plot = plot_data, filename = paste(output_filepath, '/Visual Inspection Plots',  '/', ag_do_indicator[iii], do_name_append, ag_name_append,'.png', sep = ''), device = 'png',height = 8, width = 10.5)
 
           }
       }
