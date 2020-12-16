@@ -5,7 +5,7 @@
 # Library dependencies: svDialogs, stringr, dplyr, tidyr
 
 DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('sequential','batch'),
-                     do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'),
+                     do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom', 'new'),
                      do_fix_custom_filepath, do_fix_export_filepath,
                      do_screen = c('interactive','.csv'), cores = 2){
 
@@ -17,7 +17,8 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
                   '6to9.9' = readRDS('filepath to 6to9.9 DO errors data'),
                   '3to5.9' = readRDS('filepath to 3to5.9 DO errors data'),
                   '1.5to2.9' = readRDS('filepath to 1.5to2.9 DO errors data'),
-                  'custom' = readRDS(do_fix_custom_filepath))
+                  'custom' = readRDS(do_fix_custom_filepath),
+                  'new' = 'create_new')
 
   if(runparallel == TRUE & do_filescreen_approach != 'sequential'){
 
@@ -93,7 +94,8 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
                       }
     stopCluster(cl)
 
-  } else {
+  }
+  else {
     noldus_data = DO_descriptives(do_filepaths[iii])
 
     # Custom DO typo fixes specific to MOCA Cohort Noldus Templates
@@ -152,9 +154,14 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
 
   # Find unique coding combinations
   coded_combos = unique(str_c(do_data$Behavior, do_data$Modifier2, do_data$Modifier1, sep = '_'))
-  existing_combos = str_c(do_fix$Behavior, do_fix$Modifier_2, do_fix$METs, sep = '_')
 
-  new_combos_index = which((coded_combos %in% existing_combos) == F)
+  if(do_fix == 'create_new'){
+    new_combos_index = 1:length(coded_combos)
+  }
+  else {
+    existing_combos = str_c(do_fix$Behavior, do_fix$Modifier_2, do_fix$METs, sep = '_')
+    new_combos_index = which((coded_combos %in% existing_combos) == F)
+  }
 
   if(length(new_combos_index) >0){
     new_combos= coded_combos[new_combos_index]
@@ -196,7 +203,7 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
 
       for(i in 1:nrow(need_to_screen)){
         behav_error = readline(paste('Is the coded observation [', need_to_screen$Behavior[i], ', ', need_to_screen$Modifier2[i], ', ', need_to_screen$Modifier1[i],
-                       ' - (Behavior, Activity, METs)] an implausible behavior combination? Type 1 for Yes or 0 for No:', sep = ''))
+                                     ' - (Behavior, Activity, METs)] an implausible behavior combination? Type 1 for Yes or 0 for No:', sep = ''))
 
         while(is.na(as.numeric(behav_error))){
           print('Entry needs to be either 1 or 0.')
@@ -256,15 +263,6 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
     # combo_fix$Behavior_Compendium_MET = as.character(format(combo_fix$Behavior_Compendium_MET, digits = 2))
     # combo_fix$Behavior_Compendium_MET = str_trim(combo_fix$Behavior_Compendium_MET)
 
-    do_fix$Behavior = as.character(do_fix$Behavior)
-    do_fix$Modifier_2 = as.character(do_fix$Modifier_2)
-    do_fix$METs = as.character(do_fix$METs)
-    do_fix$Reason = as.character(do_fix$Reason)
-    do_fix$MET_Fix = as.character(do_fix$MET_Fix)
-    do_fix$Behavior_Compendium_MET = as.character(do_fix$Behavior_Compendium_MET)
-    do_fix$Activity_Compendium_MET = as.character(do_fix$Activity_Compendium_MET)
-    do_fix$Error_Present = as.character(do_fix$Error_Present)
-
     combo_fix$Behavior = as.character(combo_fix$Behavior)
     combo_fix$Modifier_2 = as.character(combo_fix$Modifier_2)
     combo_fix$METs = as.character(combo_fix$METs)
@@ -274,7 +272,20 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
     combo_fix$Activity_Compendium_MET = as.character(combo_fix$Activity_Compendium_MET)
     combo_fix$Error_Present = as.character(combo_fix$Error_Present)
 
-    do_fix = bind_rows(do_fix, combo_fix)
+    if(do_fix_reference != 'new'){
+      do_fix$Behavior = as.character(do_fix$Behavior)
+      do_fix$Modifier_2 = as.character(do_fix$Modifier_2)
+      do_fix$METs = as.character(do_fix$METs)
+      do_fix$Reason = as.character(do_fix$Reason)
+      do_fix$MET_Fix = as.character(do_fix$MET_Fix)
+      do_fix$Behavior_Compendium_MET = as.character(do_fix$Behavior_Compendium_MET)
+      do_fix$Activity_Compendium_MET = as.character(do_fix$Activity_Compendium_MET)
+      do_fix$Error_Present = as.character(do_fix$Error_Present)
+
+      do_fix = bind_rows(do_fix, combo_fix)
+    } else {
+      do_fix = combo_fix
+    }
 
     if(exists('do_fix_export_filepath')){
       saveRDS(do_fix, do_fix_export_filepath)
