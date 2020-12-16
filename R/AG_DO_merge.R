@@ -76,7 +76,7 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
       noldus_data = noldus_data %>% select(Date, Time, Behavior, METs, Modifier_2, Omit_me) %>% dplyr::rename(Modifier_1 = METs) %>%
         mutate(Date = as.character(Date), Time =as.character(Time))
 
-      do_name_append = str_split(do_time_indicator[iii], ag_do_indicator[iii], simplify = T)[,2]
+      do_name_append = str_split(do_time_indicator[jjj], ag_do_indicator[iii], simplify = T)[,2]
 
       # Read in ActiGraph data, append DO data, export
       for(aaa in 1:length(ag_index)){
