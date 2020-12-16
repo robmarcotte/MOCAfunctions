@@ -253,9 +253,7 @@ DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('
     do_fix = bind_rows(do_fix, combo_fix)
 
     if(exists(do_fix_export_filepath)){
-      write_xlsx(do_fix,
-                 do_fix_export_filepath,
-                 col_names = T)
+      saveRDS(do_fix, do_fix_export_filepath)
     }
   }
 }
