@@ -12,6 +12,10 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
                        output_filepath, visual_plots = TRUE,
                        runparallel = FALSE, cores = NA){
 
+  if(length(do_time_indicator) != lengths(do_filepaths)){
+    stop('Number of do_filepaths supplied do not equal the do_time_indicator. This will result in errors, please check them to make sure every filepath has a timestamp indicator present.')
+    }
+
   do_fix = switch(do_fix_reference,
                       '18to20' = do_fix_18to20,
                       '15to17.9' = readRDS('filepath to 15to17.9 DO errors data'),
@@ -46,7 +50,8 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
     do_index = str_which(do_filepaths, ag_do_indicator[iii])
 
     # Read in and timestamp DO data
-    for(jjj in 1:length(do_index)){
+    foreach(jjj = 1:length(do_index), .packages = c('tidyr','stringr','lubridate','dplyr', 'readxl', 'doParallel','foreach','data.table', 'MOCAfunctions')) %dopar% {
+    # for(jjj in 1:length(do_index)){
       time_index = str_which(timestamps$participant, do_time_indicator[do_index[jjj]])
 
       session_start_time = timestamps$start[time_index]
@@ -80,8 +85,8 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
       do_name_append = str_split(do_time_indicator[do_index[jjj]], ag_do_indicator[iii], simplify = T)[,2]
 
       # Read in ActiGraph data, append DO data, export
-      foreach(aaa = 1:length(ag_index), .packages = c('tidyr','stringr','lubridate','dplyr', 'readxl', 'doParallel','foreach','data.table', 'MOCAfunctions')) %dopar% {
-      # for(aaa in 1:length(ag_index)){
+      # foreach(aaa = 1:length(ag_index), .packages = c('tidyr','stringr','lubridate','dplyr', 'readxl', 'doParallel','foreach','data.table', 'MOCAfunctions')) %dopar% {
+      for(aaa in 1:length(ag_index)){
         ag_data = read_ag(ag_filepaths[ag_index[aaa]], ENMO_calibrate = F, device_serial_calibrate = F)
 
         ag_data = ag_data %>% dplyr::mutate(Full_date = ymd_hms(str_c(Date, Time, sep = ' '))) %>%
