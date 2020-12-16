@@ -10,4 +10,4 @@ strip_time_from_fulldate = function(fulldate_vector){
   x = str_split(fulldate_vector, pattern = ' ', simplify = T)[,2]
 
   return(x)
-}
+  }
