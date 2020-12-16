@@ -7,7 +7,7 @@
 DO_screen = function(do_filepaths, runparallel = T, do_filescreen_approach = c('sequential','batch'),
                      do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'),
                      do_fix_custom_filepath, do_fix_export_filepath,
-                     do_screen = c('interactive','.csv')){
+                     do_screen = c('interactive','.csv'), cores = 2){
 
   do_fix = switch(do_fix_reference,
                   '18to20' = do_fix_18to20,
