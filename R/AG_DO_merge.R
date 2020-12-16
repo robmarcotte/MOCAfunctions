@@ -38,16 +38,16 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
     cores = 1
   }
 
-  cl = makeCluster(cores)
-
-  registerDoParallel(cl)
-
   # Parallel operations for a later date - RM 12/15/2020
   # foreach(iii = 1:length(ag_do_indicator), .packages = c('tidyr','stringr','lubridate','dplyr', 'readxl', 'doParallel','foreach','data.table')) %dopar% {
 
   for(iii in 1:length(ag_do_indicator)){
     ag_index = str_which(ag_filepaths, ag_do_indicator[iii])
     do_index = str_which(do_filepaths, ag_do_indicator[iii])
+
+    cl = makeCluster(cores)
+
+    registerDoParallel(cl)
 
     # Read in and timestamp DO data
     foreach(jjj = 1:length(do_index), .packages = c('tidyr','stringr','lubridate','dplyr', 'readxl', 'doParallel','foreach','data.table', 'MOCAfunctions')) %dopar% {
@@ -108,11 +108,11 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
           # Insert AG and DO visualization code from MOCA
         }
       }
+
     }
+
+
+    # Parallel operations for a later date - RM 12/15/2020
+    stopCluster(cl)
   }
-
-
-  # Parallel operations for a later date - RM 12/15/2020
-  stopCluster(cl)
-
 }
