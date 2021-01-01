@@ -92,6 +92,7 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
   # Minute = as.character(minute(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
   # Second = as.character(second(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
   # ag_data = cbind(Dates,paste(Hour,Minute,Second,sep = ':'),file_data, stringsAsFactors = F)
+
   Timestamp = seq(from = date_time_start,to = (date_time_start + (file_length/frequency)), by = 1/frequency)[1:nrow(file_data)]
 
   if(parse_timestamp == T){
@@ -110,8 +111,10 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
     if(ENMO_calibrate == T){
       colnames(file_data) = c('Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG', 'CalibratedX','CalibratedY','CalibratedZ','ENMO')
     } else {
-      ifelse(parse_timestamp == T,colnames(file_data) = c('Filename','Timestamp','Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG'),
-             colnames(file_data) = c('Filename','Timestamp','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG'))
+      if(parse_timestamp == T)
+        colnames(file_data) = c('Filename','Timestamp','Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG')
+      if(parse_timestamp == F)
+        colnames(file_data) = c('Filename','Timestamp','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG')
 
     }
   } else{
