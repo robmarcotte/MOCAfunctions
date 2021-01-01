@@ -22,7 +22,7 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
     file_data = fread(filepath,header = T, skip = 10, stringsAsFactors = F)
   }
 
-  ag_header = read.csv(filepath,header = F,stringsAsFactors = F, nrows = 10)
+  ag_header = read.csv(filepath, header = F,stringsAsFactors = F, nrows = 10)
   device_serial = str_split(ag_header[2,],'Number: ')[[1]][2]
   start = str_split(ag_header[3,],'Time ')[[1]][2]
   date = str_split(ag_header[4,],'Date ')[[1]][2]
@@ -40,10 +40,6 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
     file_data = file_data %>% mutate(`Accelerometer X` = as.numeric(`Accelerometer X`),
                                      `Accelerometer Y` = as.numeric(`Accelerometer Y`),
                                      `Accelerometer Z` = as.numeric(`Accelerometer Z`))
-
-    date_time_end = date_time_start + (file_length/frequency)
-    Timestamp = seq(from = date_time_start,to = date_time_end, by = 1/frequency)
-    Timestamp = Timestamp[1:length(Timestamp)-1]
 
     file_data = mutate(file_data,
                        VM = sqrt(`Accelerometer X`^2 + `Accelerometer Y`^2 + `Accelerometer Z`^2),
@@ -95,18 +91,24 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
     file_data = mutate(file_data, VM = sqrt(Axis1^2 + Axis2^2 + Axis3^2))
   }
 
-  Dates = as.character(lubridate::date(Timestamp))
-  Hour = as.character(hour(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
-  Minute = as.character(minute(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
-  Second = as.character(second(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
+  # Dates = as.character(lubridate::date(Timestamp))
+  # Hour = as.character(hour(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
+  # Minute = as.character(minute(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
+  # Second = as.character(second(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
+  # ag_data = cbind(Dates,paste(Hour,Minute,Second,sep = ':'),file_data, stringsAsFactors = F)
+  Timestamp = seq(from = date_time_start,to = (date_time_start + (file_length/frequency)), by = 1/frequency)[1:nrow(file_data)]
 
-  ag_data = cbind(Dates,paste(Hour,Minute,Second,sep = ':'),file_data, stringsAsFactors = F)
+  file_data = cbind(filename = basename(filepath),
+                    Timestamp = Timestamp,
+                    Date = lubridate::date(Timestamp),
+                    Time = format(Timestamp, format = "%H:%M:%S"),
+                    file_data)
 
   if(epoch<1){
     if(ENMO_calibrate == T){
       colnames(ag_data) = c('Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG', 'CalibratedX','CalibratedY','CalibratedZ','ENMO')
     } else {
-      colnames(ag_data) = c('Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG')
+      colnames(ag_data) = c('Filename','Timestamp','Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG')
     }
   } else{
     colnames(ag_data) = c('Date','Time',
