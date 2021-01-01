@@ -11,7 +11,7 @@
 #
 # Library dependencies: GGIR, stringr, data.table, dplyr
 
-read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, calibration_file){
+read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, calibration_file, parse_timestamp = T){
 
   # Accounts for exported data that includes the header or not
   # 9/4/18 Greg chnaged line below from read.csv to fread
@@ -79,15 +79,11 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
     }
 
   } else {
-    # For Count data
-    date_time_end = date_time_start + (file_length*epoch)
-    Timestamp = seq(from = date_time_start, to = date_time_end, by = epoch)
-    Timestamp = Timestamp[1:length(Timestamp)-1]
     # If Count data does not have column names when being read in
     if(is.numeric(check_data[1,])){
       colnames(file_data) <- c('Axis1', 'Axis2','Axis3', 'Steps', 'Lux','Inclinometer Off','Inclinometer Standing','Inclinometer Sitting','Inclinometer Lying')[1:ncol(file_data)]
-
     }
+
     file_data = mutate(file_data, VM = sqrt(Axis1^2 + Axis2^2 + Axis3^2))
   }
 
@@ -98,22 +94,30 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
   # ag_data = cbind(Dates,paste(Hour,Minute,Second,sep = ':'),file_data, stringsAsFactors = F)
   Timestamp = seq(from = date_time_start,to = (date_time_start + (file_length/frequency)), by = 1/frequency)[1:nrow(file_data)]
 
-  file_data = cbind(filename = basename(filepath),
-                    Timestamp = Timestamp,
-                    Date = lubridate::date(Timestamp),
-                    Time = format(Timestamp, format = "%H:%M:%S"),
-                    file_data)
+  if(parse_timestamp == T){
+    file_data = cbind(filename = basename(filepath),
+                      Timestamp = Timestamp,
+                      Date = lubridate::date(Timestamp),
+                      Time = format(Timestamp, format = "%H:%M:%S"),
+                      file_data)
+  } else {
+    file_data = cbind(filename = basename(filepath),
+                      Timestamp = Timestamp,
+                      file_data)
+  }
 
   if(epoch<1){
     if(ENMO_calibrate == T){
-      colnames(ag_data) = c('Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG', 'CalibratedX','CalibratedY','CalibratedZ','ENMO')
+      colnames(file_data) = c('Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG', 'CalibratedX','CalibratedY','CalibratedZ','ENMO')
     } else {
-      colnames(ag_data) = c('Filename','Timestamp','Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG')
+      ifelse(parse_timestamp == T,colnames(file_data) = c('Filename','Timestamp','Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG'),
+             colnames(file_data) = c('Filename','Timestamp','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG'))
+
     }
   } else{
-    colnames(ag_data) = c('Date','Time',
+    colnames(file_data) = c('Date','Time',
                           c('Axis1', 'Axis2','Axis3', 'Steps', 'Lux','Inclinometer Off','Inclinometer Standing','Inclinometer Sitting','Inclinometer Lying')[1:ncol(file_data)-1], 'VM')
   }
 
-  return(ag_data)
+  return(file_data)
 }
