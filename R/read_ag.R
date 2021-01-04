@@ -36,6 +36,10 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
   date_time_start = mdy_hms(paste(date,start, sep = ' '))
 
   if(epoch < 1){
+    if(any(colnames(file_data) == 'Timestamp')){
+      file_data = file_data %>% select(-Timestamp)
+    }
+
     # For Raw data
     file_data = file_data %>% mutate(`Accelerometer X` = as.numeric(`Accelerometer X`),
                                      `Accelerometer Y` = as.numeric(`Accelerometer Y`),
