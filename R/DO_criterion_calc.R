@@ -13,8 +13,8 @@ DO_criterion_calc = function(noldus_data, participant, samp_freq = 1, window = 1
     seconds_colindex = which(colnames(noldus_data) == seconds_colname)
 
     # Compute majority direct observations within sojourns
-    noldus_data.sum = noldus_data %>% dplyr::group_by_at(soj_colindex) %>% dplyr::summarize(step3_sojourn_index = dplyr::first(step3_sojourn_index),
-                                                                                            step3_sojourn_duration = dplyr::first(step3_sojourn_duration),
+    noldus_data.sum = noldus_data %>% dplyr::group_by_at(soj_colindex) %>% dplyr::summarize(sojourn_index = dplyr::first(.[[soj_colindex]]),# dplyr::first(step3_sojourn_index),
+                                                                                            sojourn_duration = dplyr::first(.[[seconds_colindex]]),# dplyr::first(step3_sojourn_duration),
 
                                                                                             Behavior = majority_string(Behavior, piece = 'coded_strings'),
                                                                                             Modifier_1 = majority_string(Modifier_1, piece = 'coded_strings'),
