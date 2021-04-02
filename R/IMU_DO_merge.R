@@ -101,6 +101,7 @@ IMU_DO_merge = function(imu_filepaths, do_filepaths, timestamps, do_time_indicat
 
       # Parallel operations for a later date - RM 12/15/2020
     }
+
     stopCluster(cl)
 
   }
