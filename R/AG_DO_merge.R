@@ -105,7 +105,8 @@ AG_DO_merge = function(ag_filepaths, do_filepaths, timestamps, do_time_indicator
     }
 
     # Parallel operations for a later date - RM 12/15/2020
-    stopCluster(cl)
     }
+    stopCluster(cl)
+
   }
 }
