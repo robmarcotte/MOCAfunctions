@@ -9,13 +9,13 @@
 # Library dependencies: N/A
 
 
-pow.625 <- function(signal)
+pow.625 <- function(signal, samp_freq = 80)
 {
   mods <- Mod(fft(signal))
   mods <- mods[-1]
   n <- length(mods)
   n <- floor(n/2)
-  freq <- 80*(1:n)/(2*n)
+  freq <- samp_freq*(1:n)/(2*n)
   mods <- mods[1:n]
   inds <- (1:n)[(freq>0.6)&(freq<2.5)]
   pow625 <- sum(mods[inds])/sum(mods)

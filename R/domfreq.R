@@ -7,7 +7,7 @@
 #
 # Library dependencies: N/A
 
-dom.freq <- function(signal)
+dom.freq <- function(signal, samp_freq = 80)
 {
   if(length(signal)==1)
     return(NA)
@@ -15,7 +15,7 @@ dom.freq <- function(signal)
   mods <- mods[-1]
   n <- length(mods)
   n <- floor(n/2)
-  freq <- 80*(1:n)/(2*n)
+  freq <- samp_freq*(1:n)/(2*n)
   mods <- mods[1:n]
   dom.ind <- which.max(mods)
   d.f <- as.vector(freq[which.max(mods)])

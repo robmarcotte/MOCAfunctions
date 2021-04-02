@@ -7,13 +7,13 @@
 #
 # Library dependencies: N/A
 
-frac.pow.dom.freq <- function(signal)
+frac.pow.dom.freq <- function(signal, samp_freq = 80)
 {
   mods <- Mod(fft(signal))
   mods <- mods[-1]
   n <- length(mods)
   n <- floor(n/2)
-  freq <- 80*(1:n)/(2*n)
+  freq <- samp_freq*(1:n)/(2*n)
   mods <- mods[1:n]
   rat <- max(mods)/sum(mods)
   mods[is.na(mods)] <- 0
