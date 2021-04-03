@@ -63,6 +63,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
     }
 
 
+    ag_data$Date = as.character(ag_data$Date)
     ag_data = left_join(ag_data, noldus_data)
     ag_data = cbind(Participant = participant_id, ag_data)
 
