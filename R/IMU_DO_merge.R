@@ -30,6 +30,7 @@ IMU_DO_merge = function(imu_filepath, do_filepath, timestart, samp_freq = 100, p
                                                               Modifier_3 = names(which.max(table(Modifier_3, useNA = 'ifany'))),
                                                               MET.level = names(which.max(table(MET.level, useNA = 'ifany'))))
 
+
   noldus_data =  MOCAfunctions::DO_cleaning_18to20(noldus_data, do_fix)
 
   noldus_data$Time =  MOCAfunctions::strip_time_from_fulldate(noldus_data$Timestamp)
