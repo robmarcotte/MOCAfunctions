@@ -21,19 +21,18 @@ IMU_DO_merge = function(imu_filepath, do_filepath, timestart, samp_freq = 100, p
 
   noldus_data$index = rep(seq(1, ceiling(nrow(noldus_data)/100)), each = 100)[1:nrow(noldus_data)]
 
-  noldus_data = noldus_data %>% group_by(index) %>% summarize(Participant = dplyr::first(Participant),
-                                                              Date = dplyr::first(Date),
-                                                              Time = dplyr::first(Time),
+  noldus_data = noldus_data %>% group_by(index) %>% summarize(Participant = participant_id,
+                                                              Timestamp = dplyr::first(Time),
+                                                              Date = session_date,
                                                               Behavior = names(which.max(table(Behavior, useNA = 'ifany'))),
                                                               METs = names(which.max(table(METs, useNA = 'ifany'))),
                                                               Modifier_2 = names(which.max(table(Modifier_2, useNA = 'ifany'))),
                                                               Modifier_3 = names(which.max(table(Modifier_3, useNA = 'ifany'))),
                                                               MET.level = names(which.max(table(MET.level, useNA = 'ifany'))))
 
-
   noldus_data =  MOCAfunctions::DO_cleaning_18to20(noldus_data, do_fix)
 
-  noldus_data$Time =  MOCAfunctions::strip_time_from_fulldate(noldus_data$Time)
+  noldus_data$Time =  MOCAfunctions::strip_time_from_fulldate(noldus_data$Timestamp)
 
   noldus_start = ymd_hms(str_c(noldus_data$Date[1], noldus_data$Time[1]))
   noldus_end_raw = ymd_hms(str_c(noldus_data$Date[1], noldus_data$Time[nrow(noldus_data)])) + seconds(1)
@@ -44,8 +43,8 @@ IMU_DO_merge = function(imu_filepath, do_filepath, timestart, samp_freq = 100, p
 
   do_name_append = str_split(basename(do_filepath), ' - ', simplify = T)[,2]
 
-  for(aaa in 1:length(imu_index)){
-    imu_data = fread(imu_filepaths[imu_index[aaa]], skip = imu_meta_skip)
+  for(aaa in 1:length(imu_filepaths)){
+    imu_data = fread(imu_filepaths[aaa], skip = imu_meta_skip)
     imu_data$Timestamp = ymd_hms(imu_data$Timestamp)
 
     imu_data = imu_data %>%
@@ -58,9 +57,9 @@ IMU_DO_merge = function(imu_filepath, do_filepath, timestart, samp_freq = 100, p
 
 
     imu_data = left_join(imu_data, noldus_data)
-    imu_data = cbind(Participant = do_time_indicator[iii], imu_data)
+    imu_data = cbind(Participant = participant_id, imu_data)
 
-    imu_name_append = str_split(basename(imu_filepath), participant_id, simplify = T)[,2]
+    imu_name_append = str_replace(str_split(basename(imu_filepath[aaa]), participant_id, simplify = T)[,2], '.csv', '')
 
     saveRDS(imu_data, paste(output_filepath, '/', do_name_append, imu_name_append, '.rds', sep = ''))
 
