@@ -5,13 +5,9 @@
 #
 # Library dependencies: foreach, doParallel, stringr, lubridate, dplyr, tidyr, data.table, readxl
 
-AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 100, participant_id,
+AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, participant_id,
                        do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'), do_fix_custom_filepath,
                        output_filepath){
-
-  if(length(do_time_indicator) != length(do_filepaths)){
-    stop('Number of do_filepaths supplied do not equal the do_time_indicator. This will result in errors, please check them to make sure every filepath has a timestamp indicator present.')
-    }
 
   do_fix = switch(do_fix_reference,
                       '18to20' = do_fix_18to20,
