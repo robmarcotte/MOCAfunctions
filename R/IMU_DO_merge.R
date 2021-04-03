@@ -18,6 +18,7 @@ IMU_DO_merge = function(imu_filepath, do_filepath, timestart, samp_freq = 100, p
   noldus_data = MOCAfunctions::DO_descriptives(do_filepath)
   noldus_data = MOCAfunctions::DO_msec_transform(noldus_data) # expand DO data to hundredths of seconds
   noldus_data = MOCAfunctions::DO_timestamp(noldus_data, session_start_time)
+
   noldus_data$index = rep(seq(1, ceiling(nrow(noldus_data)/100)), each = 100)[1:nrow(noldus_data)]
 
   noldus_data = noldus_data %>% group_by(index) %>% summarize(Participant = dplyr::first(Participant),
