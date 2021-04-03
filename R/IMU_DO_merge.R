@@ -44,8 +44,8 @@ IMU_DO_merge = function(imu_filepath, do_filepath, timestart, samp_freq = 100, p
 
   do_name_append = str_split(basename(do_filepath), ' - ', simplify = T)[,2]
 
-  for(aaa in 1:length(imu_filepaths)){
-    imu_data = fread(imu_filepaths[aaa], skip = imu_meta_skip)
+  for(aaa in 1:length(imu_filepath)){
+    imu_data = fread(imu_filepath[aaa], skip = imu_meta_skip)
     imu_data$Timestamp = ymd_hms(imu_data$Timestamp)
 
     imu_data = imu_data %>%
