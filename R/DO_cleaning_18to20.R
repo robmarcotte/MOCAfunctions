@@ -53,7 +53,7 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix){
   noldus_data$Omit_me = 0
 
   if(is.na(any(noldus_data$Reason != 0))| any(noldus_data$Reason != 0) == T){
-    noldus_data$METs = ifelse(str_detect(noldus_data$Reason, 'MET') == T,
+    noldus_data$METs = ifelse(!is.na(noldus_data$Reason) & str_detect(noldus_data$Reason, 'MET') == T,
                               ifelse(!is.na(noldus_data$MET_Fix), noldus_data$MET_Fix, noldus_data$METs), noldus_data$METs)
     noldus_data$Omit_me = ifelse(str_detect(noldus_data$Reason, 'Behav/Act')== T, 1, 0)
   }
