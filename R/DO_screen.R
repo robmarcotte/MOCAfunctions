@@ -254,28 +254,29 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
       screen_done = readline(paste('Finished screening ', basename(do_filepaths[iii]), ' and some errors were found. Please fix them, then press Enter to move on.', sep = ''))
     }
 
+
+
+    print(paste('Finished ', iii, ' of ', length(do_filepaths),sep = ''))
   }
 
-  print(paste('Finished ', iii, ' of ', length(do_filepaths),sep = ''))
-}
+
+  if(do_fix_update == T){
+    do_fix = do_fix %>% arrange(Behavior, Modifier_2)
+
+    # Need to fix this later since the internal DO fix data frames shouldn't be rewritten and any new do_fix dataframes should be exported to a custom filepath
+    do_fix = switch(do_fix_reference,
+                    '18to20' = do_fix_18to20,
+                    '15to17.9' = saveRDS(do_fix,'filepath to 15to17.9 DO errors data'),
+                    '13to14.9' = saveRDS(do_fix,'filepath to 13to14.9 DO errors data'),
+                    '10to12.9' = saveRDS(do_fix,'filepath to 10to12.9 DO errors data'),
+                    '6to9.9' = saveRDS(do_fix,'filepath to 6to9.9 DO errors data'),
+                    '3to5.9' = saveRDS(do_fix,'filepath to 3to5.9 DO errors data'),
+                    '1.5to2.9' = saveRDS(do_fix,'filepath to 1.5to2.9 DO errors data'),
+                    'custom' = saveRDS(do_fix,do_fix_custom_filepath),
+                    'new' = saveRDS(do_fix, do_fix_export_filepath))
 
 
-if(do_fix_update == T){
-  do_fix = do_fix %>% arrange(Behavior, Modifier_2)
-
-  # Need to fix this later since the internal DO fix data frames shouldn't be rewritten and any new do_fix dataframes should be exported to a custom filepath
-  do_fix = switch(do_fix_reference,
-                  '18to20' = do_fix_18to20,
-                  '15to17.9' = saveRDS(do_fix,'filepath to 15to17.9 DO errors data'),
-                  '13to14.9' = saveRDS(do_fix,'filepath to 13to14.9 DO errors data'),
-                  '10to12.9' = saveRDS(do_fix,'filepath to 10to12.9 DO errors data'),
-                  '6to9.9' = saveRDS(do_fix,'filepath to 6to9.9 DO errors data'),
-                  '3to5.9' = saveRDS(do_fix,'filepath to 3to5.9 DO errors data'),
-                  '1.5to2.9' = saveRDS(do_fix,'filepath to 1.5to2.9 DO errors data'),
-                  'custom' = saveRDS(do_fix,do_fix_custom_filepath),
-                  'new' = saveRDS(do_fix, do_fix_export_filepath))
-}
-
+  }
 }
 
 
