@@ -38,6 +38,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
            '3to5.9' = {},
            '1.5to2.9' = {})
 
+
     # Parse the compendium values from the coded behaviors and modifiers
     nums = c(unique(str_extract_all(noldus_data$Behavior, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)))
     if(any(nums == '', na.rm = T)){
