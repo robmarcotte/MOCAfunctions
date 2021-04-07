@@ -199,7 +199,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
                                 ifelse(combo_fix$MET_error == 1, 'MET',
                                        ifelse((combo_fix$Combo_error == 1 & combo_fix$Activity == 'Quiet'), 'Dont use Quiet as Activity Type',
                                               ifelse(combo_fix$Error_Present == 0, '', 'Behav/Act Combo'))))
-      combo_fix$Reason[combo_fix$Reason== ''] = 0
+      combo_fix$Reason  = ifelse(combo_fix$Reason == '' | is.na(combo_fix$Reason), 0, Reason)
 
       combo_fix = combo_fix %>% dplyr::select(-MET_error, -Combo_error, -full_code_combo)
 
