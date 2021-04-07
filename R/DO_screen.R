@@ -260,6 +260,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
     print(paste('Finished ', iii, ' of ', length(do_filepaths),sep = ''))
   }
 
+
   if(do_fix_update == T){
     do_fix = do_fix %>% arrange(Behavior, Modifier_2)
 
