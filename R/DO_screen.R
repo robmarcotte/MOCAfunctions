@@ -261,6 +261,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
   if(do_fix_update == T){
     do_fix = do_fix %>% arrange(Behavior, Modifier_2)
 
+    # Need to fix this later since the internal DO fix data frames shouldn't be rewritten and any new do_fix dataframes should be exported to a custom filepath
     do_fix = switch(do_fix_reference,
                     '18to20' = do_fix_18to20,
                     '15to17.9' = saveRDS(do_fix,'filepath to 15to17.9 DO errors data'),
