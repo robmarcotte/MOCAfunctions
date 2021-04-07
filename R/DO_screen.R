@@ -181,54 +181,42 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
       #
       # }
 
-    }
+      na_index = which(is.na(combo_fix$MET_error))
 
-    na_index = which(is.na(combo_fix$MET_error))
+      if(length(na_index) > 0)
+        combo_fix$MET_error[na_index] = 0
 
-    if(length(na_index) > 0)
-      combo_fix$MET_error[na_index] = 0
+      na_index = which(is.na(combo_fix$Combo_error))
 
-    na_index = which(is.na(combo_fix$Combo_error))
+      if(length(na_index) > 0)
+        combo_fix$Combo_error[na_index] = 0
 
-    if(length(na_index) > 0)
-      combo_fix$Combo_error[na_index] = 0
+      combo_fix = combo_fix %>% dplyr::rename(Modifier_2 = Modifier2,
+                                              METs = Modifier1) %>%
+        select(-criterion_met)
 
-    combo_fix = combo_fix %>% dplyr::rename(Modifier_2 = Modifier2,
-                                            METs = Modifier1) %>%
-      select(-criterion_met)
+      combo_fix$Error_Present = ifelse(combo_fix$MET_error == 1 | combo_fix$Combo_error == 1, 1, 0)
+      combo_fix$Reason = ifelse((combo_fix$MET_error == 1 & combo_fix$Combo_error == 1), 'MET and Behav/Act Combo',
+                                ifelse(combo_fix$MET_error == 1, 'MET',
+                                       ifelse((combo_fix$Combo_error == 1 & combo_fix$Activity == 'Quiet'), 'Dont use Quiet as Activity Type',
+                                              ifelse(combo_fix$Error_Present == 0, '', 'Behav/Act Combo'))))
 
-    combo_fix$Error_Present = ifelse(combo_fix$MET_error == 1 | combo_fix$Combo_error == 1, 1, 0)
-    combo_fix$Reason = ifelse((combo_fix$MET_error == 1 & combo_fix$Combo_error == 1), 'MET and Behav/Act Combo',
-                              ifelse(combo_fix$MET_error == 1, 'MET',
-                                     ifelse((combo_fix$Combo_error == 1 & combo_fix$Activity == 'Quiet'), 'Dont use Quiet as Activity Type',
-                                            ifelse(combo_fix$Error_Present == 0, '', 'Behav/Act Combo'))))
+      combo_fix$Reason  = ifelse((combo_fix$Reason == '' | is.na(combo_fix$Reason)), 0, combo_fix$Reason)
 
-    combo_fix$Reason  = ifelse((combo_fix$Reason == '' | is.na(combo_fix$Reason)), 0, combo_fix$Reason)
+      combo_fix = combo_fix %>% dplyr::select(-MET_error, -Combo_error, -full_code_combo)
 
-    combo_fix = combo_fix %>% dplyr::select(-MET_error, -Combo_error, -full_code_combo)
+      combo_fix$METs = as.character(format(combo_fix$METs, digits = 2))
+      combo_fix$METs = str_trim(combo_fix$METs, side = 'left')
 
-    combo_fix$METs = as.character(format(combo_fix$METs, digits = 2))
-    combo_fix$METs = str_trim(combo_fix$METs, side = 'left')
+      combo_fix$Behavior = as.character(combo_fix$Behavior)
+      combo_fix$Modifier_2 = as.character(combo_fix$Modifier_2)
+      combo_fix$METs = as.character(combo_fix$METs)
+      combo_fix$Reason = as.character(combo_fix$Reason)
+      combo_fix$MET_Fix = as.character(combo_fix$MET_Fix)
+      combo_fix$Behavior_Compendium_MET = as.character(combo_fix$Behavior_Compendium_MET)
+      combo_fix$Activity_Compendium_MET = as.character(combo_fix$Activity_Compendium_MET)
+      combo_fix$Error_Present = as.character(combo_fix$Error_Present)
 
-    combo_fix$Behavior = as.character(combo_fix$Behavior)
-    combo_fix$Modifier_2 = as.character(combo_fix$Modifier_2)
-    combo_fix$METs = as.character(combo_fix$METs)
-    combo_fix$Reason = as.character(combo_fix$Reason)
-    combo_fix$MET_Fix = as.character(combo_fix$MET_Fix)
-    combo_fix$Behavior_Compendium_MET = as.character(combo_fix$Behavior_Compendium_MET)
-    combo_fix$Activity_Compendium_MET = as.character(combo_fix$Activity_Compendium_MET)
-    combo_fix$Error_Present = as.character(combo_fix$Error_Present)
-
-    do_fix$Behavior = as.character(do_fix$Behavior)
-    do_fix$Modifier_2 = as.character(do_fix$Modifier_2)
-    do_fix$METs = as.character(do_fix$METs)
-    do_fix$Reason = as.character(do_fix$Reason)
-    do_fix$MET_Fix = as.character(do_fix$MET_Fix)
-    do_fix$Behavior_Compendium_MET = as.character(do_fix$Behavior_Compendium_MET)
-    do_fix$Activity_Compendium_MET = as.character(do_fix$Activity_Compendium_MET)
-    do_fix$Error_Present = as.character(do_fix$Error_Present)
-
-    if(do_fix_reference != 'new'){
       do_fix$Behavior = as.character(do_fix$Behavior)
       do_fix$Modifier_2 = as.character(do_fix$Modifier_2)
       do_fix$METs = as.character(do_fix$METs)
@@ -238,9 +226,21 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
       do_fix$Activity_Compendium_MET = as.character(do_fix$Activity_Compendium_MET)
       do_fix$Error_Present = as.character(do_fix$Error_Present)
 
-      do_fix = bind_rows(do_fix, combo_fix)
-    } else {
-      do_fix = bind_rows(do_fix, combo_fix)
+      if(do_fix_reference != 'new'){
+        do_fix$Behavior = as.character(do_fix$Behavior)
+        do_fix$Modifier_2 = as.character(do_fix$Modifier_2)
+        do_fix$METs = as.character(do_fix$METs)
+        do_fix$Reason = as.character(do_fix$Reason)
+        do_fix$MET_Fix = as.character(do_fix$MET_Fix)
+        do_fix$Behavior_Compendium_MET = as.character(do_fix$Behavior_Compendium_MET)
+        do_fix$Activity_Compendium_MET = as.character(do_fix$Activity_Compendium_MET)
+        do_fix$Error_Present = as.character(do_fix$Error_Present)
+
+        do_fix = bind_rows(do_fix, combo_fix)
+      } else {
+        do_fix = bind_rows(do_fix, combo_fix)
+      }
+
     }
 
     error_indicator = do_fix %>% select(Behavior, Modifier_2, METs, Error_Present, Reason) %>%
