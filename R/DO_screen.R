@@ -11,7 +11,6 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
                      do_screen = c('interactive','.csv'),
                      do_fix_update = c(TRUE, FALSE)){
 
-  print('test')
   do_fix = switch(do_fix_reference,
                   '18to20' = do_fix_18to20,
                   '15to17.9' = readRDS('filepath to 15to17.9 DO errors data'),
@@ -135,11 +134,11 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
         met_errors = which(need_to_screen$MET_error == 1)
         for(i in met_errors){
-          print(paste('MET Error 1 of ', length(met_errors),' --> ',need_to_screen$Behavior[i], ', ', need_to_screen$Modifier2[i], ', ', need_to_screen$Modifier1[i], ' METs was coded.', sep = ''))
-          print(paste('METs should have been either the Behavior Compendium (', need_to_screen$Behavior_Compendium_MET[i], ') or Activity Compendium (', need_to_screen$Activity_Compendium_MET[i],') METs', sep = ''))
-          met_fix = readline('Enter the proper MET value for the DO combination above: ')
+          print(paste('File ', iii, ' of ', length(do_filepaths),': MET Error 1 of ', length(met_errors),' --> ',need_to_screen$Behavior[i], ', ', need_to_screen$Modifier2[i], ', ', need_to_screen$Modifier1[i], ' METs was coded.', sep = ''))
+          print(paste('File ', iii, ' of ', length(do_filepaths),': METs should have been either the Behavior Compendium (', need_to_screen$Behavior_Compendium_MET[i], ') or Activity Compendium (', need_to_screen$Activity_Compendium_MET[i],') METs', sep = ''))
+          met_fix = readline('File ', iii, ' of ', length(do_filepaths),': Enter the proper MET value for the DO combination above: ')
           while(is.na(as.numeric(met_fix))){
-            met_fix = readline('Entry needs to be a number. Enter the proper MET value for the DO combination above: ')
+            met_fix = readline('File ', iii, ' of ', length(do_filepaths),': Entry needs to be a number. Enter the proper MET value for the DO combination above: ')
           }
           need_to_screen$MET_Fix[i] = met_fix
         }
@@ -147,13 +146,13 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
         print('Done with screening MET anomalies. Moving on to manual inspection for implausible coding combinations (e.g. Standing while sitting)')
 
         for(i in 1:nrow(need_to_screen)){
-          print(paste(need_to_screen$Behavior[i], ' while ', need_to_screen$Modifier2[i], ' was coded (Whole Body Movement and Activity Type, respectively)', sep = ''))
-          behav_error = readline(paste('Is this an IMPLAUSIBLE behavior? (Type 1 for "Yes, this is an error" or 0 for "No, this is reasonable", then press Enter): ', sep = ''))
+          print(paste('File ', iii, ' of ', length(do_filepaths),': ', need_to_screen$Behavior[i], ' while ', need_to_screen$Modifier2[i], ' was coded (Whole Body Movement and Activity Type, respectively)', sep = ''))
+          behav_error = readline(paste('File ', iii, ' of ', length(do_filepaths),': Is this an IMPLAUSIBLE behavior? (Type 1 for "Yes, this is an error" or 0 for "No, this is reasonable", then press Enter): ', sep = ''))
 
           while(is.na(as.numeric(behav_error)) | abs(as.numeric(behav_error)) > 1){
-            print('Entry needs to be either 1 or 0.')
-            print(paste(need_to_screen$Behavior[i], ' while ', need_to_screen$Modifier2[i], ' was coded (Whole Body Movement and Activity Type, respectively)', sep = ''))
-            behav_error = readline(paste('Is this an IMPLAUSIBLE behavior? (Type 1 for "Yes, this is an error" or 0 for "No, this is reasonable", then press Enter): ', sep = ''))
+            print('File ', iii, ' of ', length(do_filepaths),': Entry needs to be either 1 or 0.')
+            print(paste('File ', iii, ' of ', length(do_filepaths),': ', need_to_screen$Behavior[i], ' while ', need_to_screen$Modifier2[i], ' was coded (Whole Body Movement and Activity Type, respectively)', sep = ''))
+            behav_error = readline(paste('File ', iii, ' of ', length(do_filepaths),': Is this an IMPLAUSIBLE behavior? (Type 1 for "Yes, this is an error" or 0 for "No, this is reasonable", then press Enter): ', sep = ''))
 
           }
           need_to_screen$Combo_error[i] = behav_error
