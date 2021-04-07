@@ -11,6 +11,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
                      do_screen = c('interactive','.csv'),
                      do_fix_update = c(TRUE, FALSE)){
 
+  print('test')
   do_fix = switch(do_fix_reference,
                   '18to20' = do_fix_18to20,
                   '15to17.9' = readRDS('filepath to 15to17.9 DO errors data'),
