@@ -17,7 +17,7 @@ DO_descriptives = function(noldus_data, column_METs = 'Modifier_1', read_first =
 
   noldus_data <- noldus_data[noldus_data$Event_Type=="State start",] # remove all stop times since they're 0 duration
 
-  important_names = str_which(colnames(noldus_data),paste('Duration_sf','Behavior','Modifier', sep = '|'))
+  important_names = str_which(colnames(noldus_data),paste('Time_Relative_sf', 'Duration_sf','Behavior','Modifier', sep = '|'))
   names = names(noldus_data)[important_names]
   names[str_which(names, column_METs)] = 'METs'
 
