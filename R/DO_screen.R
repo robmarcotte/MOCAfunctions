@@ -247,9 +247,9 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
       rename(Modifier2 = Modifier_2, Modifier1 = METs) %>% filter(str_detect(Reason, 'Behav/Act Combo'))
 
     do_data = left_join(do_data, error_indicator)
+    noldus_errors = do_data %>% filter(Error_Present == 1)
 
-    if(nrow(combo_fix)>0){
-      noldus_errors = do_data %>% filter(Error_Present == 1)
+    if(nrow(noldus_errors)>0){
       View(noldus_errors)
       screen_done = readline(paste('Finished screening ', basename(do_filepaths[iii]), ' and some errors were found. Please fix them, then press Enter to move on.', sep = ''))
     }
