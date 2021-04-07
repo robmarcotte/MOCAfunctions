@@ -254,8 +254,6 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
       screen_done = readline(paste('Finished screening ', basename(do_filepaths[iii]), ' and some errors were found. Please fix them, then press Enter to move on.', sep = ''))
     }
 
-
-
     print(paste('Finished ', iii, ' of ', length(do_filepaths),sep = ''))
   }
 
