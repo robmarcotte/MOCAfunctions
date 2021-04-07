@@ -67,7 +67,8 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
     modifier2_compendium = apply(modifier2_compendium, 1, str_c, collapse = ', ')
     modifier2_compendium = str_replace_all(modifier2_compendium, ', NA', '')
 
-    do_data = data.frame(Behavior = behavior,
+    do_data = data.frame(Time_Relative_sf = noldus_data$Time_Relative_sf,
+                         Behavior = behavior,
                          Modifier2 = modifier2,
                          Modifier1 = noldus_data$METs,
                          Behavior_Compendium_MET = behavior_compendium,
@@ -180,45 +181,54 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
       #
       # }
 
-      na_index = which(is.na(combo_fix$MET_error))
+    }
 
-      if(length(na_index) > 0)
-        combo_fix$MET_error[na_index] = 0
+    na_index = which(is.na(combo_fix$MET_error))
 
-      na_index = which(is.na(combo_fix$Combo_error))
+    if(length(na_index) > 0)
+      combo_fix$MET_error[na_index] = 0
 
-      if(length(na_index) > 0)
-        combo_fix$Combo_error[na_index] = 0
+    na_index = which(is.na(combo_fix$Combo_error))
 
-      combo_fix = combo_fix %>% dplyr::rename(Modifier_2 = Modifier2,
-                                              METs = Modifier1) %>%
-        select(-criterion_met)
+    if(length(na_index) > 0)
+      combo_fix$Combo_error[na_index] = 0
 
-      combo_fix$Error_Present = ifelse(combo_fix$MET_error == 1 | combo_fix$Combo_error == 1, 1, 0)
-      combo_fix$Reason = ifelse((combo_fix$MET_error == 1 & combo_fix$Combo_error == 1), 'MET and Behav/Act Combo',
-                                ifelse(combo_fix$MET_error == 1, 'MET',
-                                       ifelse((combo_fix$Combo_error == 1 & combo_fix$Activity == 'Quiet'), 'Dont use Quiet as Activity Type',
-                                              ifelse(combo_fix$Error_Present == 0, '', 'Behav/Act Combo'))))
+    combo_fix = combo_fix %>% dplyr::rename(Modifier_2 = Modifier2,
+                                            METs = Modifier1) %>%
+      select(-criterion_met)
 
-      combo_fix$Reason  = ifelse(combo_fix$Reason == '' | is.na(combo_fix$Reason), 0, combo_fix$Reason)
+    combo_fix$Error_Present = ifelse(combo_fix$MET_error == 1 | combo_fix$Combo_error == 1, 1, 0)
+    combo_fix$Reason = ifelse((combo_fix$MET_error == 1 & combo_fix$Combo_error == 1), 'MET and Behav/Act Combo',
+                              ifelse(combo_fix$MET_error == 1, 'MET',
+                                     ifelse((combo_fix$Combo_error == 1 & combo_fix$Activity == 'Quiet'), 'Dont use Quiet as Activity Type',
+                                            ifelse(combo_fix$Error_Present == 0, '', 'Behav/Act Combo'))))
 
-      combo_fix = combo_fix %>% dplyr::select(-MET_error, -Combo_error, -full_code_combo)
+    combo_fix$Reason  = ifelse((combo_fix$Reason == '' | is.na(combo_fix$Reason)), 0, combo_fix$Reason)
 
-      combo_fix$METs = as.character(format(combo_fix$METs, digits = 2))
-      combo_fix$METs = str_trim(combo_fix$METs, side = 'left')
+    combo_fix = combo_fix %>% dplyr::select(-MET_error, -Combo_error, -full_code_combo)
 
-      # combo_fix$Behavior_Compendium_MET = as.character(format(combo_fix$Behavior_Compendium_MET, digits = 2))
-      # combo_fix$Behavior_Compendium_MET = str_trim(combo_fix$Behavior_Compendium_MET)
+    combo_fix$METs = as.character(format(combo_fix$METs, digits = 2))
+    combo_fix$METs = str_trim(combo_fix$METs, side = 'left')
 
-      combo_fix$Behavior = as.character(combo_fix$Behavior)
-      combo_fix$Modifier_2 = as.character(combo_fix$Modifier_2)
-      combo_fix$METs = as.character(combo_fix$METs)
-      combo_fix$Reason = as.character(combo_fix$Reason)
-      combo_fix$MET_Fix = as.character(combo_fix$MET_Fix)
-      combo_fix$Behavior_Compendium_MET = as.character(combo_fix$Behavior_Compendium_MET)
-      combo_fix$Activity_Compendium_MET = as.character(combo_fix$Activity_Compendium_MET)
-      combo_fix$Error_Present = as.character(combo_fix$Error_Present)
+    combo_fix$Behavior = as.character(combo_fix$Behavior)
+    combo_fix$Modifier_2 = as.character(combo_fix$Modifier_2)
+    combo_fix$METs = as.character(combo_fix$METs)
+    combo_fix$Reason = as.character(combo_fix$Reason)
+    combo_fix$MET_Fix = as.character(combo_fix$MET_Fix)
+    combo_fix$Behavior_Compendium_MET = as.character(combo_fix$Behavior_Compendium_MET)
+    combo_fix$Activity_Compendium_MET = as.character(combo_fix$Activity_Compendium_MET)
+    combo_fix$Error_Present = as.character(combo_fix$Error_Present)
 
+    do_fix$Behavior = as.character(do_fix$Behavior)
+    do_fix$Modifier_2 = as.character(do_fix$Modifier_2)
+    do_fix$METs = as.character(do_fix$METs)
+    do_fix$Reason = as.character(do_fix$Reason)
+    do_fix$MET_Fix = as.character(do_fix$MET_Fix)
+    do_fix$Behavior_Compendium_MET = as.character(do_fix$Behavior_Compendium_MET)
+    do_fix$Activity_Compendium_MET = as.character(do_fix$Activity_Compendium_MET)
+    do_fix$Error_Present = as.character(do_fix$Error_Present)
+
+    if(do_fix_reference != 'new'){
       do_fix$Behavior = as.character(do_fix$Behavior)
       do_fix$Modifier_2 = as.character(do_fix$Modifier_2)
       do_fix$METs = as.character(do_fix$METs)
@@ -228,54 +238,43 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
       do_fix$Activity_Compendium_MET = as.character(do_fix$Activity_Compendium_MET)
       do_fix$Error_Present = as.character(do_fix$Error_Present)
 
-      if(do_fix_reference != 'new'){
-        do_fix$Behavior = as.character(do_fix$Behavior)
-        do_fix$Modifier_2 = as.character(do_fix$Modifier_2)
-        do_fix$METs = as.character(do_fix$METs)
-        do_fix$Reason = as.character(do_fix$Reason)
-        do_fix$MET_Fix = as.character(do_fix$MET_Fix)
-        do_fix$Behavior_Compendium_MET = as.character(do_fix$Behavior_Compendium_MET)
-        do_fix$Activity_Compendium_MET = as.character(do_fix$Activity_Compendium_MET)
-        do_fix$Error_Present = as.character(do_fix$Error_Present)
-
-        do_fix = bind_rows(do_fix, combo_fix)
-      } else {
-        do_fix = bind_rows(do_fix, combo_fix)
-      }
-
-      combo_fix = combo_fix %>% filter(str_detect(Reason, 'Behav/Act Combo'))
-
-      error_indicator = combo_fix %>% select(Behavior, Modifier_2, METs, Error_Present, Reason)
-
-      noldus_data = left_join(noldus_data, error_indicator)
-
-      if(nrow(combo_fix)>0){
-        noldus_errors = noldus_data %>% filter(Error_Present == 1)
-        View(noldus_errors)
-        screen_done = readline(paste('Finished screening ', basename(do_filepaths[iii]), ' and some errors were found. Please fix them, then press Enter to move on.', sep = ''))
-      }
-
+      do_fix = bind_rows(do_fix, combo_fix)
+    } else {
+      do_fix = bind_rows(do_fix, combo_fix)
     }
 
-    print(paste('Finished ', iii, ' of ', length(do_filepaths),sep = ''))
+    error_indicator = do_fix %>% select(Behavior, Modifier_2, METs, Error_Present, Reason) %>%
+      rename(Modifier2 = Modifier_2, Modifier1 = METs) %>% filter(str_detect(Reason, 'Behav/Act Combo'))
+
+    do_data = left_join(do_data, error_indicator)
+
+    if(nrow(combo_fix)>0){
+      noldus_errors = do_data %>% filter(Error_Present == 1)
+      View(noldus_errors)
+      screen_done = readline(paste('Finished screening ', basename(do_filepaths[iii]), ' and some errors were found. Please fix them, then press Enter to move on.', sep = ''))
+    }
+
   }
 
+  print(paste('Finished ', iii, ' of ', length(do_filepaths),sep = ''))
+}
 
-  if(do_fix_update == T){
-    do_fix = do_fix %>% arrange(Behavior, Modifier_2)
 
-    # Need to fix this later since the internal DO fix data frames shouldn't be rewritten and any new do_fix dataframes should be exported to a custom filepath
-    do_fix = switch(do_fix_reference,
-                    '18to20' = do_fix_18to20,
-                    '15to17.9' = saveRDS(do_fix,'filepath to 15to17.9 DO errors data'),
-                    '13to14.9' = saveRDS(do_fix,'filepath to 13to14.9 DO errors data'),
-                    '10to12.9' = saveRDS(do_fix,'filepath to 10to12.9 DO errors data'),
-                    '6to9.9' = saveRDS(do_fix,'filepath to 6to9.9 DO errors data'),
-                    '3to5.9' = saveRDS(do_fix,'filepath to 3to5.9 DO errors data'),
-                    '1.5to2.9' = saveRDS(do_fix,'filepath to 1.5to2.9 DO errors data'),
-                    'custom' = saveRDS(do_fix,do_fix_custom_filepath),
-                    'new' = saveRDS(do_fix, do_fix_export_filepath))
-  }
+if(do_fix_update == T){
+  do_fix = do_fix %>% arrange(Behavior, Modifier_2)
+
+  # Need to fix this later since the internal DO fix data frames shouldn't be rewritten and any new do_fix dataframes should be exported to a custom filepath
+  do_fix = switch(do_fix_reference,
+                  '18to20' = do_fix_18to20,
+                  '15to17.9' = saveRDS(do_fix,'filepath to 15to17.9 DO errors data'),
+                  '13to14.9' = saveRDS(do_fix,'filepath to 13to14.9 DO errors data'),
+                  '10to12.9' = saveRDS(do_fix,'filepath to 10to12.9 DO errors data'),
+                  '6to9.9' = saveRDS(do_fix,'filepath to 6to9.9 DO errors data'),
+                  '3to5.9' = saveRDS(do_fix,'filepath to 3to5.9 DO errors data'),
+                  '1.5to2.9' = saveRDS(do_fix,'filepath to 1.5to2.9 DO errors data'),
+                  'custom' = saveRDS(do_fix,do_fix_custom_filepath),
+                  'new' = saveRDS(do_fix, do_fix_export_filepath))
+}
 
 }
 
