@@ -244,8 +244,8 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
     }
 
-    error_indicator = do_fix %>% select(Behavior, Modifier_2, METs, Error_Present, Reason) %>%
-      rename(Modifier2 = Modifier_2, Modifier1 = METs) %>% filter(str_detect(Reason, 'Behav/Act Combo'))
+    error_indicator = do_fix %>% dplyr::select(Behavior, Modifier_2, METs, Error_Present, Reason) %>%
+      dplyr::rename(Modifier2 = Modifier_2, Modifier1 = METs) %>% dplyr::filter(str_detect(Reason, 'Behav/Act Combo'))
 
     do_data = left_join(do_data, error_indicator)
     noldus_errors = do_data %>% filter(Error_Present == 1)
