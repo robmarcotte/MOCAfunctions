@@ -85,17 +85,15 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
   } else {
     # If Count data does not have column names when being read in
     if(is.numeric(check_data[1,])){
-      colnames(file_data) <- c('Axis1', 'Axis2','Axis3', 'Steps', 'Lux','Inclinometer Off','Inclinometer Standing','Inclinometer Sitting','Inclinometer Lying')[1:ncol(file_data)]
+      colnames(file_data) <- c('Axis1', 'Axis2','Axis3', 'Steps', 'Lux','Inclinometer Off','Inclinometer Standing','Inclinometer Sitting','Inclinometer Lying')[1:ncol(file_data)] # hardcoded column names may result in issues
     }
+
+    frequency = 1
 
     file_data = mutate(file_data, VM = sqrt(Axis1^2 + Axis2^2 + Axis3^2))
   }
 
-  # Dates = as.character(lubridate::date(Timestamp))
-  # Hour = as.character(hour(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
-  # Minute = as.character(minute(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
-  # Second = as.character(second(Timestamp)) %>% str_pad(width = 2, side = 'left',pad = '0')
-  # ag_data = cbind(Dates,paste(Hour,Minute,Second,sep = ':'),file_data, stringsAsFactors = F)
+
 
   Timestamp = seq(from = date_time_start,to = (date_time_start + (file_length/frequency)), by = 1/frequency)[1:nrow(file_data)]
 
@@ -121,9 +119,6 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
         colnames(file_data) = c('Filename','Timestamp','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG')
 
     }
-  } else{
-    colnames(file_data) = c('Date','Time',
-                          c('Axis1', 'Axis2','Axis3', 'Steps', 'Lux','Inclinometer Off','Inclinometer Standing','Inclinometer Sitting','Inclinometer Lying')[1:ncol(file_data)-1], 'VM')
   }
 
   return(file_data)
