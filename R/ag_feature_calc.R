@@ -12,7 +12,7 @@
 # Library dependencies: N/A
 
 
-ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80,window = 15, soj_colname = NA, seconds_colname = NA){
+ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80,window = 15, soj_colname = NA, seconds_colname = NA, inactive_threshold = .1){
 
   n <- dim(ag_data_raw_wrist)[1]
 
@@ -23,17 +23,31 @@ ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80,window
   if(window == 'sojourns'){
     soj_colindex = which(colnames(ag_data_raw_wrist) == soj_colname)
     seconds_colindex = which(colnames(ag_data_raw_wrist) == seconds_colname)
-    # Compute features within sojourns
-    ag_data_raw_wrist.sum <- data.frame(sojourn = tapply(ag_data_raw_wrist[,soj_colindex], ag_data_raw_wrist[,soj_colindex], data.table::first),
-                                        seconds = tapply(ag_data_raw_wrist[,seconds_colindex], ag_data_raw_wrist[,soj_colindex], data.table::first),
-                                        mean.vm=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,soj_colindex],mean,na.rm=T),
-                                        sd.vm=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,soj_colindex],sd,na.rm=T),
-                                        mean.ang=tapply(ag_data_raw_wrist$v.ang,ag_data_raw_wrist[,soj_colindex],mean,na.rm=T),
-                                        sd.ang=tapply(ag_data_raw_wrist$v.ang,ag_data_raw_wrist[,soj_colindex],sd,na.rm=T),
-                                        p625=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,soj_colindex],pow.625),
-                                        dfreq=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,soj_colindex],dom.freq),
-                                        ratio.df=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,soj_colindex],frac.pow.dom.freq),
-                                        stringsAsFactors = F)
+
+    # Compute features within sojourns using dplyr
+    ag_data_raw_wrist.sum = ag_data_raw_wrist %>% dplyr::group_by_at(soj_colindex) %>% dplyr::summarize(sojourn = dplyr::first(.[[soj_colindex]]),
+                                                                                                        seconds = dplyr::first(.[[seconds_colindex]]),
+                                                                                                        perc.soj.inactive = mean(VM_sd_1sec<=inactive_threshold),
+                                                                                                        mean.vm = mean(VM, na.rm = T),
+                                                                                                        sd.vm = sd(VM, na.rm = T),
+                                                                                                        mean.ang = mean(v.ang, na.rm = T),
+                                                                                                        sd.ang = sd(v.ang, na.rm = T),
+                                                                                                        p625 = pow.625(VM),
+                                                                                                        dfreq = dom.freq(VM),
+                                                                                                        ratio.df = frac.pow.dom.freq(VM))
+
+
+    # Compute features within sojourns using tapply
+    # ag_data_raw_wrist.sum <- data.frame(sojourn = tapply(ag_data_raw_wrist[,..soj_colindex], ag_data_raw_wrist[,..soj_colindex], data.table::first),
+    #                                     seconds = tapply(ag_data_raw_wrist[,..seconds_colindex], ag_data_raw_wrist[,..soj_colindex], data.table::first),
+    #                                     mean.vm=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,..soj_colindex],mean,na.rm=T),
+    #                                     sd.vm=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,..soj_colindex],sd,na.rm=T),
+    #                                     mean.ang=tapply(ag_data_raw_wrist$v.ang,ag_data_raw_wrist[,..soj_colindex],mean,na.rm=T),
+    #                                     sd.ang=tapply(ag_data_raw_wrist$v.ang,ag_data_raw_wrist[,..soj_colindex],sd,na.rm=T),
+    #                                     p625=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,..soj_colindex],pow.625),
+    #                                     dfreq=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,..soj_colindex],dom.freq),
+    #                                     ratio.df=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,..soj_colindex],frac.pow.dom.freq),
+    #                                     stringsAsFactors = F)
   } else {
 
     epoch <- ceiling(n/(samp_freq*window))
