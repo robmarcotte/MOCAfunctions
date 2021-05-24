@@ -1,40 +1,79 @@
 # Function to re-integrate 1-second actigraph count data into a larger epoch
 ag_epochr = function(ag_data_1sec,epoch = 60){
+
   rows = nrow(ag_data_1sec)
+  new_rows = ceiling(rows/epoch)
 
-  new_rows = floor(rows/epoch)
+  ag_data_1sec$index = rep(seq(1, new_rows, by = 1), each = epoch)[1:rows]
 
-  new_rows_index = (seq(1:new_rows)*epoch)+1
-  new_rows_index = c(1,new_rows_index)
-  new_rows_index = new_rows_index[-length(new_rows_index)]
+  first_only_colnames = which(str_detect(colnames(ag_data_1sec), paste('file','stamp','Date','Time', sep = '|')))
 
-  Date = ag_data_1sec$Date[new_rows_index]
-  Time = ag_data_1sec$Time[new_rows_index]
-  count_data = data.frame(Axis1 = rep(0,new_rows), Axis2 = rep(0,new_rows), Axis3 = rep(0,new_rows))
+  epoch_data = ag_data_1sec[seq(1, nrow(ag_data_1sec), by = epoch), ..first_only_colnames]
 
-  for (i in 1:new_rows){
+  count_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Date = dplyr::first(Date),
+                                                                     Time = dplyr::first(Time),
+                                                                     Axis1 = sum(Axis1, na.rm = T),
+                                                                     Axis2 = sum(Axis2, na.rm = T),
+                                                                     Axis3 = sum(Axis3, na.rm = T)) %>% select(-index) %>%
+    mutate(VM = sqrt(Axis1^2 + Axis2^2+ Axis3^2))
 
-    if(i+1 <= new_rows){
-      count_data$Axis1[i] = sum(ag_data_1sec$Axis1[new_rows_index[i]:(new_rows_index[i+1]-1)])
-      count_data$Axis2[i] = sum(ag_data_1sec$Axis2[new_rows_index[i]:(new_rows_index[i+1]-1)])
-      count_data$Axis3[i] = sum(ag_data_1sec$Axis3[new_rows_index[i]:(new_rows_index[i+1]-1)])
+  epoch_data = left_join(epoch_data, count_data)
 
-    } else {
-      count_data$Axis1[i] = sum(ag_data_1sec$Axis1[new_rows_index[i]:(new_rows_index[i]+epoch-1)])
-      count_data$Axis2[i] = sum(ag_data_1sec$Axis2[new_rows_index[i]:(new_rows_index[i]+epoch-1)])
-      count_data$Axis3[i] = sum(ag_data_1sec$Axis3[new_rows_index[i]:(new_rows_index[i]+epoch-1)])
+  # If there's step data,  reaggregate to epoch level
+  if(any(str_detect(colnames(ag_data_1sec), 'Step'))){
+    step_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Date = dplyr::first(Date),
+                                                                       Time = dplyr::first(Time),
+                                                                       Steps = sum(Steps, na.rm = T)) %>% select(-index)
 
-      # Handles excess if not exact 1 hour length
-      # if((new_rows_index[i]+epoch-1) < rows){
-      #   excess$Axis1 = sum(ag_data_1sec$Axis1[(new_rows_index[i]+epoch-1):rows])
-      #   excess$Axis2 = sum(ag_data_1sec$Axis2[(new_rows_index[i]+epoch-1):rows])
-      #   excess$Axis3 = sum(ag_data_1sec$Axis3[(new_rows_index[i]+epoch-1):rows])
-      # }
+    epoch_data = left_join(epoch_data, step_data)
+  }
+
+  # If there's inclinometer data, reaggregate to epoch level
+  if(any(str_detect(colnames(ag_data_1sec), 'Inclinometer'))){
+    inclinometer_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Date = dplyr::first(Date),
+                                                                      Time = dplyr::first(Time),
+                                                                      `Inclinometer Off` = sum(`Inclinometer Off`, na.rm = T),
+                                                                      `Inclinometer Standing` = sum(`Inclinometer Standing`, na.rm = T),
+                                                                      `Inclinometer Sitting` = sum(`Inclinometer Sitting`, na.rm = T),
+                                                                      `Inclinometer Lying` = sum(`Inclinometer Lying`, na.rm = T)) %>%
+      select(-index)
+
+    epoch_data = left_join(epoch_data, inclinometer_data)
+  }
+
+  # If there's lux data, reaggregate to epoch level
+  if(any(str_detect(colnames(ag_data_1sec), 'Lux'))){
+    lux_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Date = dplyr::first(Date),
+                                                                              Time = dplyr::first(Time),
+                                                                              Lux = mean(Lux, na.rm =T)) %>%
+      select(-index)
+
+    epoch_data = left_join(epoch_data, lux_data)
+  }
+
+  # if theres LFE data, repeat all steps for count axes and step data
+  if(any(str_detect(colnames(ag_data_1sec), 'LFE'))){
+    count_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Date = dplyr::first(Date),
+                                                                       Time = dplyr::first(Time),
+                                                                       Axis1_LFE = sum(Axis1_LFE, na.rm = T),
+                                                                       Axis2_LFE = sum(Axis2_LFE, na.rm = T),
+                                                                       Axis3_LFE = sum(Axis3_LFE, na.rm = T)) %>% select(-index) %>%
+      mutate(VM_LFE = sqrt(Axis1^2 + Axis2^2+ Axis3^2))
+
+    epoch_data = left_join(epoch_data, count_data)
+
+    # If there's step data, also reaggregate to epoch level
+    if(any(str_detect(colnames(ag_data_1sec), 'Step'))){
+      step_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Date = dplyr::first(Date),
+                                                                        Time = dplyr::first(Time),
+                                                                        Steps_LFE = sum(Steps_LFE, na.rm = T)) %>% select(-index)
+
+      epoch_data = left_join(epoch_data, step_data)
     }
+
 
   }
 
-  epoch_data = data.frame(Date = Date, Time = Time, count_data)
   epoch_data$VM = sqrt(epoch_data$Axis1^2 + epoch_data$Axis2^2 + epoch_data$Axis3^2)
 
   return(epoch_data)
