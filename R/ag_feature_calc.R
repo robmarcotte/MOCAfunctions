@@ -48,6 +48,7 @@ ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80,window
     #                                     dfreq=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,..soj_colindex],dom.freq),
     #                                     ratio.df=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist[,..soj_colindex],frac.pow.dom.freq),
     #                                     stringsAsFactors = F)
+
   } else {
 
     epoch <- ceiling(n/(samp_freq*window))
