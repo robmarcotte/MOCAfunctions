@@ -37,7 +37,7 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
 
   if(epoch < 1){
     if(any(colnames(file_data) == 'Timestamp')){
-      file_data = file_data %>% select(-Timestamp)
+      file_data = file_data %>% dplyr::select(-Timestamp)
     }
 
     # For Raw data
