@@ -1,6 +1,7 @@
 #' Tree models from Staudenmayer et al 2015
 #'
 #' @param   acc_data_raw Raw tri-axial wrist accelerometer data with column names Timestamp, AxisX, AxisY, AxisZ
+#' @param   mods_filepath Filepath that contains rf.loc.model in an RData object. Assuming by default that model is already loaded in the environment.
 #' @param   samp_freq Sampling frequency of the raw accelerometer data. Default is 80 hz
 #' @param   epoch Non-overlapping window size in seconds. Default is 15-seconds
 #' @param   expand_1sec Binary indicator of whether only SedSphere estimates should be returned as a second-by-second vector
@@ -9,7 +10,7 @@
 #'
 #' @example sedsphere(acc_data_raw)
 
-staudenmayer2015_rf_loco = function(acc_data_raw, samp_freq = 80, epoch = 15, expand_1sec = F){
+staudenmayer2015_rf_loco = function(acc_data_raw, mods_filepath = NA, samp_freq = 80, epoch = 15, expand_1sec = F){
   acc_data_raw$VMcorrG = abs(sqrt(acc_data_raw$AxisX^2 + acc_data_raw$AxisY^2 + acc_data_raw$AxisZ^2)-1)
   acc_data_raw$v.ang <- 90*(asin(acc_data_raw$AxisX/acc_data_raw$VM)/(pi/2))
 
@@ -27,6 +28,10 @@ staudenmayer2015_rf_loco = function(acc_data_raw, samp_freq = 80, epoch = 15, ex
                                  p625=tapply(acc_data_raw$VM,acc_data_raw$min,pow.625),
                                  dfreq=tapply(acc_data_raw$VM,acc_data_raw$min,dom.freq),
                                  ratio.df=tapply(acc_data_raw$VM,acc_data_raw$min,frac.pow.dom.freq))
+
+  if(!is.na(mods_filepath)){
+    load(mods_filepath)
+  }
 
   acc_data_raw.sum$loco.rf <- factor(predict(rf.loc.model, newdata=acc_data_raw.sum, type="class"), levels =c('locomotion','non-locomotion'), labels =c('locomotion','non-locomotion'))
 
