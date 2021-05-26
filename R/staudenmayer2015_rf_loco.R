@@ -44,6 +44,7 @@ staudenmayer2015_rf_loco = function(acc_data_raw, mods_filepath = NA, samp_freq 
 
     return(acc_data_raw.sum)
 
+
   }
 
 }
