@@ -29,7 +29,7 @@ soj_g = function(data = NA, export_format = 'session', freq = 80, step1_sd_thres
   data_summary$step2_sojourn_duration = zoo::na.locf(data_summary$step2_sojourn_duration)
   data_summary$step2_sojourn_index = sort(unlist(tapply(data_summary$step2_sojourn_index, data_summary$step2_sojourn_index, nest_sojourn, nest_length = step2_nest_length)))
 
-  data$step1_sd_vm = rep(data_summary$sd_vm, each = freq)[1:nrow(data)]
+  data$VM_sd_1sec = rep(data_summary$sd_vm, each = freq)[1:nrow(data)]
   data$step1_estimate = rep(data_summary$step1_estimate, each = freq)[1:nrow(data)]
   data$step2_sojourn_index = rep(data_summary$step2_sojourn_index, each = freq)[1:nrow(data)]
   data$step2_sojourn_duration = rep(data_summary$step2_sojourn_duration, each = freq)[1:nrow(data)]
@@ -68,8 +68,7 @@ soj_g = function(data = NA, export_format = 'session', freq = 80, step1_sd_thres
   ag_step3_summary$step3_estimate_locomotion = predict(PAMethods::stage3_locomotion_rf, newdata = ag_step3_summary, type = 'class')
 
   if(export_format == 'session'){
-    session_summary = data.frame(Filename = basename(filepath),
-                                 Sedentary_minutes = sum(ag_step3_summary$step3_durations[which(ag_step3_summary$step3_estimate_intensity == 'Sedentary')]),
+    session_summary = data.frame(Sedentary_minutes = sum(ag_step3_summary$step3_durations[which(ag_step3_summary$step3_estimate_intensity == 'Sedentary')]),
                                  Light_minutes = sum(ag_step3_summary$step3_durations[which(ag_step3_summary$step3_estimate_intensity == 'Light')]),
                                  Moderate_minutes = sum(ag_step3_summary$step3_durations[which(ag_step3_summary$step3_estimate_intensity == 'Moderate')]),
                                  Vigorous_minutes = sum(ag_step3_summary$step3_durations[which(ag_step3_summary$step3_estimate_intensity == 'Vigorous')]),
@@ -81,14 +80,12 @@ soj_g = function(data = NA, export_format = 'session', freq = 80, step1_sd_thres
                                  Locomotion_minutes = sum(ag_step3_summary$step3_durations[which(ag_step3_summary$step3_estimate_locomotion == 'Locomotion')]),
                                  Total_minutes = sum(ag_step3_summary$step3_durations),
                                  stringsAsFactors = F)
-    session_summary[,2:ncol(session_summary)] = session_summary[,2:ncol(session_summary)]/60
+    session_summary[,1:ncol(session_summary)] = session_summary[,1:ncol(session_summary)]/60
 
     return(session_summary)
   }
 
   if(export_format == 'sojourn'){
-    filename_column = data.frame(Filename = basename(filepath), stringsAsFactors = F)
-    ag_step3_summary = cbind(filename_column, ag_step3_summary)
     return(ag_step3_summary)
   }
 
@@ -97,10 +94,8 @@ soj_g = function(data = NA, export_format = 'session', freq = 80, step1_sd_thres
     data_summary$step3_estimate_type = rep(ag_step3_summary$step3_estimate_type, times = ag_step3_summary$step3_durations)
     data_summary$step3_estimate_locomotion = rep(ag_step3_summary$step3_estimate_locomotion, times = ag_step3_summary$step3_durations)
 
-    filename_column = data.frame(Filename = basename(filepath),
-                                 Timestamp = data$Timestamp[seq(1, nrow(data), by = freq)[1:nrow(data_summary)]],
-                                 stringsAsFactors = F)
-    data_summary = cbind(filename_column, data_summary)
+    data_summary$Timestamp = data$Timestamp[seq(1, nrow(data), by = freq)[1:nrow(data_summary)]]
+    data_summary = data_summary %>% dplyr::relocate(Timestamp)
 
     return(data_summary)
   }
