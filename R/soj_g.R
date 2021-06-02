@@ -1,6 +1,5 @@
 #' Soj-g function from Marcotte et al 2021
 #'
-#' @param filepath A filepath (.rds object or .csv) with raw wrist accelerometer data. Default is NA
 #' @param data A dataframe with raw wrist accelerometer data with column names Timestamp, AxisX, AxisY, AxisZ, VM
 #' @param freq Sampling frequency of raw accelerometer data. 80 Hz by default
 #' @param step1_sd_threshold Threshold used to classify likely inactive periods
@@ -12,22 +11,7 @@
 #'
 #' Library Dependencies: matrixStats, data.table, zoo, dplyr, randomForest, tools, AGread
 
-soj_g = function(filepath = NA, data = NA, export_format = 'session', freq = 80, step1_sd_threshold = .00375, step2_nest_length = 5, step3_nest_length = 60, step3_orig_soj_length_min = 180){
-
-  filetype = file_ext(filepath)
-
-  # Assuming that the filepath provided is an .rds file
-  if(filetype == 'rds'){
-    data = readRDS(filepath)
-    filename_column = data.frame(filename = basename(filepath), stringsAsFactors = F)
-    data = cbind(filename_column, data)
-  }
-
-  if(filetype == 'csv'){
-    data = MOCAfunctions::read_ag(filepath, ENMO_calibrate = F, device_serial_calibrate = F, parse_timestamp = F)
-    # colnames(data) = c('filename','date_processed','Timestamp','AxisX','AxisY','AxisZ') # uncomment when using AGread read_AG_raw function. Redacted due to timestamp issues
-    data$VM = sqrt(data$AxisX^2 + data$AxisY^2 + data$AxisZ^2)
-  }
+soj_g = function(data = NA, export_format = 'session', freq = 80, step1_sd_threshold = .00375, step2_nest_length = 5, step3_nest_length = 60, step3_orig_soj_length_min = 180){
 
   # Step 1 - Identify likely inactive periods
   data_summary = data.frame(index = 1:ceiling(nrow(data)/freq), sd_vm = rowSds(matrix(data$VM, ncol = freq, byrow = T)))
