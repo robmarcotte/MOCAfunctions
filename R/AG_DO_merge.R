@@ -1,9 +1,16 @@
-# AG_DO_merge
-#
-# Function to automate the process of merging ActiGraph and Noldus direct observation data
-# Assumes that screening of observations has already occurred and either a default do_fix data or a custom filepath with how to approach novel observations is provided. See DO_screen for further details.
-#
-# Library dependencies: foreach, doParallel, stringr, lubridate, dplyr, tidyr, data.table, readxl
+#' Function to automate the process of merging ActiGraph and Noldus direct observation data
+#' Assumes that screening of observations has already occurred and either a default do_fix data or a custom filepath with how to approach novel observations is provided. See DO_screen for further details.
+#'
+#' @param ag_filepath Filepath containing ActiGraph data
+#' @param do_filepath Filepath containing Noldus Observer XT data coded using the MOCA coding template
+#' @param timestart Time object (ymd_hms format) identifying the start of the direct observation
+#' @param samp_freq Sampling frequency of raw accelerometer data
+#' @param participant_id Character string of the filename or participant ID
+#' @param do_fix_reference Character string to identify which lookup table should be used for correct direct observation annotations
+#' @param do_fix_custom_filepath Filepath containing a custom lookup table for correcting direct observation annotations
+#' @param output_filepath Filepath where merged actigraph and direct observation data should be stored
+#'
+#' Library dependencies: foreach, doParallel, stringr, lubridate, dplyr, tidyr, data.table, readxl
 
 AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, participant_id,
                        do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'), do_fix_custom_filepath,

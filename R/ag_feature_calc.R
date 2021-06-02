@@ -1,15 +1,13 @@
-# ag_feature_calc
+#' Custom function to compute features of raw accelerometer data. Can be applied to fixed- or variable-windows (epochs vs sojourns, respectively).
+#'
+#' @param ag_data_raw_wrist Raw accelerometer data containing AxisX, AxisY, AxisZ, and VM data columns
+#' @param participant Character string for participant ID
+#' @param samp_freq Sampling frequency of the raw accelerometer data. Defaults to 80 Hz
+#' @param window Epoch window (in seconds). Can be either a fixed number or 'sojourn' character string. If 'sojourn', a column of sojourn indices is expected to be present in the data.
+#' @param soj_colname Character string for column name containing the sojourn indices
+#' @param seconds_colname Character string for column name containing the duration of a given sojourn
 #
-# Custom function to compute features of raw accelerometer data. Can be applied to fixed- or variable-windows (epochs vs sojourns, respectively).
-#
-# ag_data_raw_wrist = Raw accelerometer data containing AxisX, AxisY, AxisZ, and VM data columns
-# participant = Character string for participant ID
-# samp_freq = Sampling frequency of the raw accelerometer data. Defaults to 80 Hz
-# window = Epoch window (in seconds). Can be either a fixed number or 'sojourn' character string. If 'sojourn', a column of sojourn indices is expected to be present in the data.
-# soj_colname = Column name containing the sojourn indices
-# seconds_colname = Column name containing the duration of a given sojourn
-#
-# Library dependencies: N/A
+#' Library dependencies: tidyverse, lubridate, data.table
 
 
 ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80,window = 15, soj_colname = NA, seconds_colname = NA, inactive_threshold = .1){

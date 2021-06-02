@@ -1,4 +1,9 @@
-# Function to re-integrate 1-second actigraph count data into a larger epoch
+#' Function to re-integrate 1-second actigraph count data into a larger epoch
+#' @param ag_data_1sec ActiGraph count data exported in 1-second format
+#' @param epoch Numeric integer for the desired reintegrated epoch length
+#'
+#'
+#'
 ag_epochr = function(ag_data_1sec,epoch = 60){
 
   rows = nrow(ag_data_1sec)
