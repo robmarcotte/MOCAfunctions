@@ -7,9 +7,8 @@
 #' @param device_serial_calibrate Binary indicator (T/F) of whether to use device-specific correction factor coefficients when there is insufficient non-movement periods in the data file for auto-calibration
 #' @param calibration_file Data frame containing device serial numbers and device-specific correction factor coefficients
 #' @param parse_timestamp Binary indicator (T/F) of whether the Timestamp should be separated into Date and Time columns. For larger files, this extends the read and return time.
-#
-#' Library dependencies: GGIR, stringr, data.table, dplyr
-
+#'
+#'
 read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, calibration_file, parse_timestamp = T){
 
   check_data = fread(filepath,header = F,skip = 10, nrows = 1)[1,]
