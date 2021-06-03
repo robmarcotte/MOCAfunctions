@@ -1,20 +1,17 @@
-# read_ag
+#' Function to read in ActiGraph accelerometer data.
+#' Filepath provided should be to an excel .csv format file
+#' Accelerometer data should be exported with steps, lux, and inclinometer data. Otherwise, may result in improper column naming
+#'
+#' @param filepath Character string of complete filepath for a single ActiGraph accelerometer excel file. May be raw or count-based data
+#' @param ENMO_calibrate  Binary indicator (T/F) of whether ENMO calibrated acceleration data should be computed. Uses g.calibrate function from GGIR (broken with recent GGIR updates)
+#' @param device_serial_calibrate Binary indicator (T/F) of whether to use device-specific correction factor coefficients when there is insufficient non-movement periods in the data file for auto-calibration
+#' @param calibration_file Data frame containing device serial numbers and device-specific correction factor coefficients
+#' @param parse_timestamp Binary indicator (T/F) of whether the Timestamp should be separated into Date and Time columns. For larger files, this extends the read and return time.
 #
-# Function to read in ActiGraph accelerometer data.
-# Filepath provided should be to an excel .csv format file
-# Accelerometer data should be exported with steps, lux, and inclinometer data. Otherwise, may result in improper column naming
-#
-# filepath = Character string of complete filepath for a single ActiGraph accelerometer excel file
-# ENMO_calibrate = Binary indicator (T/F) of whether ENMO calibrated acceleration data should be computed. Uses g.calibrate function from GGIR (broken with recent GGIR updates)
-# device_serial_calibrate = Binary indicator (T/F) of whether to use device-specific correction factor coefficients when there is insufficient non-movement periods in the data file for auto-calibration
-# calibration_file = Imported data frame with the device-specifi correction factor coefficients
-#
-# Library dependencies: GGIR, stringr, data.table, dplyr
+#' Library dependencies: GGIR, stringr, data.table, dplyr
 
 read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, calibration_file, parse_timestamp = T){
 
-  # Accounts for exported data that includes the header or not
-  # 9/4/18 Greg chnaged line below from read.csv to fread
   check_data = fread(filepath,header = F,skip = 10, nrows = 1)[1,]
   if(is.numeric(check_data[1,])){
     file_data = fread(filepath,header = F, skip = 10, stringsAsFactors = F)
