@@ -78,20 +78,22 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
 
     }
 
+    Timestamp = seq(from = date_time_start,to = (date_time_start + (file_length/frequency)), by = 1/frequency)[1:nrow(file_data)]
+
   } else {
     # If Count data does not have column names when being read in
     if(is.numeric(check_data[1,])){
       colnames(file_data) <- c('Axis1', 'Axis2','Axis3', 'Steps', 'Lux','Inclinometer Off','Inclinometer Standing','Inclinometer Sitting','Inclinometer Lying')[1:ncol(file_data)] # hardcoded column names may result in issues
     }
 
-    frequency = 1
+    frequency = epoch
 
     file_data = mutate(file_data, VM = sqrt(Axis1^2 + Axis2^2 + Axis3^2))
+
+    Timestamp = seq(from = date_time_start,to = (date_time_start + file_length*epoch), by = epoch)[1:nrow(file_data)]
+
   }
 
-
-
-  Timestamp = seq(from = date_time_start,to = (date_time_start + (file_length/frequency)), by = 1/frequency)[1:nrow(file_data)]
 
   if(parse_timestamp == T){
     file_data = cbind(filename = basename(filepath),
