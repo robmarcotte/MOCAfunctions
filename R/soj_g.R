@@ -37,7 +37,7 @@ soj_g = function(data = NA, export_format = 'session', freq = 80, step1_sd_thres
   ag_step2_summary = ag_feature_calc(data, samp_freq = freq, window = 'sojourns', soj_colname = 'step2_sojourn_index', seconds_colname = 'step2_sojourn_duration')
   ag_step2_summary$step2_durations = rle(data_summary$step2_sojourn_index)[[1]]
 
-  ag_step2_summary$step2_estimate = predict(MOCAModelData::stage2_unclassified_rf, newdata = ag_step2_summary, type = 'class')
+  ag_step2_summary$step2_estimate = predict(MOCAModelData::sojg_stage2_unclassified_rf, newdata = ag_step2_summary, type = 'class')
 
   data_summary$step2_estimate = rep(ag_step2_summary$step2_estimate, times = ag_step2_summary$step2_durations)
   data_summary$step2_estimate = ifelse(data_summary$step1_estimate == 1, 1, data_summary$step2_estimate)
@@ -63,8 +63,8 @@ soj_g = function(data = NA, export_format = 'session', freq = 80, step1_sd_thres
     summarize(step2_estimate = dplyr::first(step2_estimate)) %>% select(step2_estimate) %>% ungroup() %>% as.vector()
   ag_step3_summary$step2_estimate = final_step2_estimate$step2_estimate
 
-  ag_step3_summary$step3_estimate_intensity = predict(MOCAModelData::stage3_intensity_rf, newdata = ag_step3_summary, type = 'class')
-  ag_step3_summary$step3_estimate_type = predict(MOCAModelData::stage3_activity_rf, newdata = ag_step3_summary, type = 'class')
+  ag_step3_summary$step3_estimate_intensity = predict(MOCAModelData::sojg_stage3_intensity_rf, newdata = ag_step3_summary, type = 'class')
+  ag_step3_summary$step3_estimate_type = predict(MOCAModelData::sojg_stage3_activity_rf, newdata = ag_step3_summary, type = 'class')
   ag_step3_summary$step3_estimate_locomotion = predict(MOCAModelData::stage3_locomotion_rf, newdata = ag_step3_summary, type = 'class')
 
   if(export_format == 'session'){
