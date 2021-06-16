@@ -65,7 +65,7 @@ soj_g = function(data = NA, export_format = 'session', freq = 80, step1_sd_thres
 
   ag_step3_summary$step3_estimate_intensity = predict(MOCAModelData::sojg_stage3_intensity_rf, newdata = ag_step3_summary, type = 'class')
   ag_step3_summary$step3_estimate_type = predict(MOCAModelData::sojg_stage3_activity_rf, newdata = ag_step3_summary, type = 'class')
-  ag_step3_summary$step3_estimate_locomotion = predict(MOCAModelData::stage3_locomotion_rf, newdata = ag_step3_summary, type = 'class')
+  ag_step3_summary$step3_estimate_locomotion = predict(MOCAModelData::sojg_stage3_locomotion_rf, newdata = ag_step3_summary, type = 'class')
 
   if(export_format == 'session'){
     session_summary = data.frame(Sedentary_minutes = sum(ag_step3_summary$step3_durations[which(ag_step3_summary$step3_estimate_intensity == 'Sedentary')]),
