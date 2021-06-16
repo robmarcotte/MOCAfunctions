@@ -13,6 +13,11 @@
 
 soj_g = function(data = NA, export_format = 'session', freq = 80, step1_sd_threshold = .00375, step2_nest_length = 5, step3_nest_length = 60, step3_orig_soj_length_min = 180){
 
+  # Remove last partial fraction of a second if number of observations is not a clean multiple of the sampling frequency
+  if(nrow(data)%%freq!= 0){
+    data = data[1:(nrow(data)-(nrow(data)%%freq)),]
+  }
+
   # Step 1 - Identify likely inactive periods
   data_summary = data.frame(index = 1:ceiling(nrow(data)/freq), sd_vm = rowSds(matrix(data$VM, ncol = freq, byrow = T)))
   data_summary$step1_estimate = ifelse(data_summary$sd_vm <=step1_sd_threshold, 1, 0) # 1 = inactive, 0 = unclassified
