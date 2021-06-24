@@ -5,12 +5,20 @@
 #' @param   samp_freq Sampling frequency of the raw accelerometer data. Default is 80 hz
 #' @param   epoch Non-overlapping window size in seconds. Default is 15-seconds
 #' @param   expand_1sec Binary indicator of whether only SedSphere estimates should be returned as a second-by-second vector
+#' @param   long_axis Axis that is parallel to the long axis of the forearm when worn on the wrist. Default is y
+#' @param   interpolae Binary indicator of whether raw acceleration signal should be interpolated to 100 Hz. Default is T
 #'
 #' @return  Aggregated data in 15-second epochs with accelerometer values and SedSphere estimate
 #'
 #' @example sedsphere(acc_data_raw)
 
-sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch = 15, expand_1sec = F){
+sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch = 15, expand_1sec = F, long_axis = 'y', interpolate = T){
+  # Original method was developed using the sum of VMcorrG values from 100 Hz data. If samp_freq is not 100 Hz, need to interpolate/upsample to proper frequency
+  if(samp_freq != 100 & interpolate == T){
+    acc_data_raw = MIMSunit::interpolate_signal(acc_data_raw)
+    samp_freq = 100
+  }
+
   acc_data_raw$VMcorrG = abs(sqrt(acc_data_raw$AxisX^2 + acc_data_raw$AxisY^2 + acc_data_raw$AxisZ^2)-1)
 
   n <- dim(acc_data_raw)[1]
@@ -25,9 +33,14 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
                                  mean.z=tapply(acc_data_raw$AxisZ,acc_data_raw$min,mean,na.rm=T),
                                  sum.VMcorrG = tapply(acc_data_raw$VMcorrG,acc_data_raw$min,sum,na.rm=T))
 
-  acc_data_raw.sum$v.ang <- ifelse(acc_data_raw.sum$mean.y > 1, asin(1)*180/pi,
-                                        ifelse(acc_data_raw.sum$mean.y < -1, asin(-1)*180/pi,
-                                               asin(pmin(pmax(acc_data_raw.sum$mean.y,-1.0),1.0))*180/pi))
+  long_axis_index = switch(long_axis,
+                           'x' = 2,
+                           'y' = 3,
+                           'z' = 4)
+
+  acc_data_raw.sum$v.ang <- ifelse(acc_data_raw.sum[,long_axis_index] > 1, asin(1)*180/pi,
+                                        ifelse(acc_data_raw.sum[,long_axis_index] < -1, asin(-1)*180/pi,
+                                               asin(pmin(pmax(acc_data_raw.sum[,long_axis_index],-1.0),1.0))*180/pi))
 
   # 0 = Sedentary, 1 = Upright, 2 = MVPA Activity
   acc_data_raw.sum$SedSphere = ifelse(acc_data_raw.sum$sum.VMcorrG > VMcorrG_mod_15s,2,
