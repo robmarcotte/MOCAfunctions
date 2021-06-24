@@ -5,7 +5,7 @@
 #' @param   samp_freq Sampling frequency of the raw accelerometer data. Default is 80 hz
 #' @param   epoch Non-overlapping window size in seconds. Default is 15-seconds
 #' @param   expand_1sec Binary indicator of whether only SedSphere estimates should be returned as a second-by-second vector
-#' @param   long_axis Axis that is parallel to the long axis of the forearm when worn on the wrist. Default is y
+#' @param   long_axis Axis that is parallel to the long axis of the forearm when worn on the wrist. Default is y, and assumes the X, Y, and Z axes are at column positions 2:4, respectively
 #' @param   interpolae Binary indicator of whether raw acceleration signal should be interpolated to 100 Hz. Default is T
 #'
 #' @return  Aggregated data in 15-second epochs with accelerometer values and SedSphere estimate
@@ -44,7 +44,7 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
 
   # 0 = Sedentary, 1 = Upright, 2 = MVPA Activity
   acc_data_raw.sum$SedSphere = ifelse(acc_data_raw.sum$sum.VMcorrG > VMcorrG_mod_15s,2,
-                                           ifelse(acc_data_raw.sum$v.ang < -15,1,0))
+                                           ifelse(acc_data_raw.sum$v.ang > 15,1,0)) # modified from <-15 to >15 because angles below horizontal are 0 to +90deg based on above calculation
   acc_data_raw.sum$SedSphere = factor(acc_data_raw.sum$SedSphere, levels = c(0,1,2), labels =c('Sedentary','Upright','MVPA_Activity'))
 
 
