@@ -18,7 +18,6 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
     acc_data_raw = MIMSunit::interpolate_signal(acc_data_raw)
     samp_freq = 100
   }
-
   acc_data_raw$VMcorrG = abs(sqrt(acc_data_raw$AxisX^2 + acc_data_raw$AxisY^2 + acc_data_raw$AxisZ^2)-1)
 
   n <- dim(acc_data_raw)[1]
