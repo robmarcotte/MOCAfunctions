@@ -54,7 +54,6 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
     return(SedSphere)
 
   } else {
-
     return(acc_data_raw.sum)
 
   }
