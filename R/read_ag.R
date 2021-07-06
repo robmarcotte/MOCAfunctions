@@ -103,6 +103,7 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
   }
 
 
+
   if(parse_timestamp == T){
     file_data = cbind(filename = basename(filepath),
                       Timestamp = Timestamp,
