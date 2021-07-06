@@ -14,7 +14,7 @@
 
 AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, participant_id,
                        do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'), do_fix_custom_filepath,
-                       output_filepath, export = F){
+                       output_filepath, export = F, device_serial_calibrate_df = NA){
 
   do_fix = switch(do_fix_reference,
                       '18to20' = do_fix_18to20,
@@ -59,7 +59,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
   do_name_append = str_split(basename(do_filepath), ' - ', simplify = T)[,2]
 
   for(aaa in 1:length(ag_filepath)){
-    ag_data = read_ag(ag_filepath[aaa], ENMO_calibrate = T, device_serial_calibrate = T)
+    ag_data = read_ag(ag_filepath[aaa], ENMO_calibrate = T, device_serial_calibrate = T, calibration_file = device_serial_calibrate_df, parse_timestamp = F)
 
     ag_data = ag_data %>% dplyr::mutate(Full_date = ymd_hms(str_c(Date, Time, sep = ' '))) %>%
       filter(inrange(Full_date, noldus_start, noldus_end_raw))%>% select(-Full_date)
