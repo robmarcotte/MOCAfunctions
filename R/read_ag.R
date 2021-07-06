@@ -48,7 +48,12 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
     colnames(file_data) = c('AxisX','AxisY','AxisZ','VM','VMcorrG')
 
     if(ENMO_calibrate == T){
-      C = g.calibrate(filepath,use.temp = F, printsummary=F)
+      if(nrow(file_data) > 12*60*60*80){
+        C = g.calibrate(filepath,use.temp = F, printsummary=F)
+      } else {
+        C = list(offset = c(0,0,0),
+                 scale = c(1,1,1))
+      }
 
       if(device_serial_calibrate == T){
         if(C$offset[1] == 0 & C$scale[1] == 1){
@@ -74,7 +79,7 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
                          calX = AxisX*C$scale[1] + C$offset[1],
                          calY = AxisY*C$scale[2] + C$offset[2],
                          calZ = AxisZ*C$scale[3] + C$offset[3],
-                         ENMO = sqrt(calX^2 + calY^2 + calZ^2)-1)
+                         ENMO = (sqrt(calX^2 + calY^2 + calZ^2)-1)*1000) # convert to milli-gravitational units
 
       file_data = mutate(file_data, ENMO = ifelse(ENMO < 0,0,ENMO))
 
