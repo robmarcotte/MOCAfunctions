@@ -64,8 +64,8 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
   for(aaa in 1:length(ag_filepath)){
     ag_data = read_ag(ag_filepath[aaa], ENMO_calibrate = T, device_serial_calibrate = T, calibration_file = device_serial_calibrate_df, parse_timestamp = F)
 
-    ag_data = ag_data %>% dplyr::mutate(Full_date = ymd_hms(str_c(Date, Time, sep = ' '))) %>%
-      filter(inrange(Full_date, noldus_start, noldus_end_raw))%>% select(-Full_date)
+    ag_data = ag_data %>%
+      filter(inrange(Timestamp, noldus_start, noldus_end_raw))
 
     if(nrow(ag_data)%%samp_freq!=0){
       excess_remainder = nrow(ag_data)%%samp_freq
