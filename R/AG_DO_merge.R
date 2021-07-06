@@ -58,23 +58,27 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
   noldus_end_count = ymd_hms(str_c(noldus_data$Date[1], noldus_data$Time[nrow(noldus_data)]))
 
   noldus_data = noldus_data %>% select(Date, Time, Behavior, METs, Modifier_2, Omit_me) %>% dplyr::rename(Modifier_1 = METs) %>%
-    mutate(Date = as.character(Date), Time =as.character(Time))
+    mutate(Date = as.character(Date), Time =as.character(Time)) %>%
+    mutate(Timestamp = ymd_hms(str_c(Date, Time, sep =' ')))
 
   do_name_append = str_split(basename(do_filepath), ' - ', simplify = T)[,2]
 
   for(aaa in 1:length(ag_filepath)){
     ag_data = read_ag(ag_filepath[aaa], ENMO_calibrate = T, device_serial_calibrate = T, calibration_file = device_serial_calibrate_df, parse_timestamp = F)
 
-    ag_data = ag_data %>%
-      filter(inrange(Timestamp, noldus_start, noldus_end_raw))
+
+    if(str_detect(ag_filepath[aaa], 'RAW')){
+      ag_data = ag_data %>% filter(inrange(Timestamp, noldus_start, noldus_end_raw))
+    } else {
+      ag_data = ag_data %>% filter(inrange(Timestamp, noldus_start, noldus_end_count))
+    }
 
     if((ag_data$Timestamp[2]-ag_data$Timestamp[1])<1 & (nrow(ag_data)%%samp_freq!=0)){
       excess_remainder = nrow(ag_data)%%samp_freq
-      ag_data = ag_data[-((nrow(ag_data)-excess_remainder):nrow(ag_data)),]
+      ag_data = head(ag_data, -excess_remainder)
     }
 
 
-    ag_data$Date = as.character(ag_data$Date)
     ag_data = left_join(ag_data, noldus_data)
     ag_data = cbind(Participant = participant_id, ag_data)
 
@@ -85,7 +89,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
     } else {
       if(aaa == 1){
         ag_export <- vector(mode = "list", length = length(ag_filepath))
-        ag_export[[aaa]] = list(ag_data)
+        ag_export[[aaa]] = ag_data
       } else {
         ag_export[[aaa]] = ag_data
       }
