@@ -68,7 +68,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
     ag_data = ag_data %>%
       filter(inrange(Timestamp, noldus_start, noldus_end_raw))
 
-    if(nrow(ag_data)%%samp_freq!=0){
+    if((ag_data$Timestamp[2]-ag_data$Timestamp[1])<1 & (nrow(ag_data)%%samp_freq!=0)){
       excess_remainder = nrow(ag_data)%%samp_freq
       ag_data = ag_data[-((nrow(ag_data)-excess_remainder):nrow(ag_data)),]
     }
@@ -84,7 +84,8 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
       saveRDS(ag_data, paste(output_filepath, '/', do_name_append, ag_name_append, '.rds', sep = ''))
     } else {
       if(aaa == 1){
-        ag_export = list(ag_data)
+        ag_export <- vector(mode = "list", length = length(ag_filepath))
+        ag_export[[aaa]] = list(ag_data)
       } else {
         ag_export[[aaa]] = ag_data
       }
