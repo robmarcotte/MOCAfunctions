@@ -45,6 +45,8 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
                        VM = sqrt(`Accelerometer X`^2 + `Accelerometer Y`^2 + `Accelerometer Z`^2),
                        VMcorrG = abs(sqrt(`Accelerometer X`^2 + `Accelerometer Y`^2 + `Accelerometer Z`^2)-1))
 
+    colnames(file_data) = c('AxisX','AxisY','AxisZ','VM','VMcorrG')
+
     if(ENMO_calibrate == T){
       C = g.calibrate(filepath,use.temp = F, printsummary=F)
 
@@ -69,13 +71,14 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
       }
 
       file_data = mutate(file_data,
-                         calX = `Accelerometer X`*C$scale[1] + C$offset[1],
-                         calY = `Accelerometer Y`*C$scale[2] + C$offset[2],
-                         calZ = `Accelerometer Z`*C$scale[3] + C$offset[3],
+                         calX = AxisX*C$scale[1] + C$offset[1],
+                         calY = AxisY*C$scale[2] + C$offset[2],
+                         calZ = AxisZ*C$scale[3] + C$offset[3],
                          ENMO = sqrt(calX^2 + calY^2 + calZ^2)-1)
 
       file_data = mutate(file_data, ENMO = ifelse(ENMO < 0,0,ENMO))
 
+      colnames(file_data) = c('AxisX','AxisY','AxisZ', 'VM','VMcorrG','calX','calY','calZ','ENMO')
     }
 
     Timestamp = seq(from = date_time_start,to = (date_time_start + (file_length/frequency)), by = 1/frequency)[1:nrow(file_data)]
@@ -101,22 +104,13 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
                       Date = lubridate::date(Timestamp),
                       Time = format(Timestamp, format = "%H:%M:%S"),
                       file_data)
+    colnames(file_data) = c('Filename','Timestamp','Date','Time',colnames(file_data))
+
   } else {
     file_data = cbind(filename = basename(filepath),
                       Timestamp = Timestamp,
                       file_data)
-  }
 
-  if(epoch<1){
-    if(ENMO_calibrate == T){
-      colnames(file_data) = c('Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG', 'CalibratedX','CalibratedY','CalibratedZ','ENMO')
-    } else {
-      if(parse_timestamp == T)
-        colnames(file_data) = c('Filename','Timestamp','Date','Time','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG')
-      if(parse_timestamp == F)
-        colnames(file_data) = c('Filename','Timestamp','AxisX','AxisY','AxisZ', 'VM', 'VMcorrG')
-
-    }
   }
 
   return(file_data)
