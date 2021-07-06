@@ -48,6 +48,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
 
   noldus_data$METs = as.character(noldus_data$METs)
 
+
   noldus_data =  MOCAfunctions::DO_cleaning_18to20(noldus_data, do_fix)
 
   noldus_data$Time =  MOCAfunctions::strip_time_from_fulldate(noldus_data$Timestamp)
