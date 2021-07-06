@@ -73,6 +73,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
       ag_data = ag_data %>% filter(inrange(Timestamp, noldus_start, noldus_end_count))
     }
 
+
     if((ag_data$Timestamp[2]-ag_data$Timestamp[1])<1 & (nrow(ag_data)%%samp_freq!=0)){
       excess_remainder = nrow(ag_data)%%samp_freq
       ag_data = head(ag_data, -excess_remainder)
