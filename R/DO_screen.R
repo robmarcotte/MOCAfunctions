@@ -5,15 +5,15 @@
 # Library dependencies: svDialogs, stringr, dplyr, tidyr
 
 DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
-                     do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom', 'new'),
-                     age_group = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9'),
+                     do_fix_reference = c('18to20','15to17','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom', 'new'),
+                     age_group = c('18to20','15to17','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9'),
                      do_fix_custom_filepath, do_fix_export_filepath,
                      do_screen = c('interactive','.csv'),
                      do_fix_update = c(TRUE, FALSE)){
 
   do_fix = switch(do_fix_reference,
                   '18to20' = do_fix_18to20,
-                  '15to17.9' = do_fix_15to17,
+                  '15to17' = do_fix_15to17,
                   '13to14.9' = readRDS('filepath to 13to14.9 DO errors data'),
                   '10to12.9' = readRDS('filepath to 10to12.9 DO errors data'),
                   '6to9.9' = readRDS('filepath to 6to9.9 DO errors data'),
@@ -30,7 +30,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
            '18to20' = {
              noldus_data$Behavior = str_replace(noldus_data$Behavior, pattern = 'WalkLoad 4.5', replacement = 'WalkLoad (4.5')
              noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Carrying Small Child 2.3\\) ', replacement = 'Carrying Small Child (2.3)')},
-           '15to17.9' = {
+           '15to17' = {
              noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Active Video Games (2.4. 5.9)', replacement = 'Active Video Games (2.4, 5.9)')},
            '13to14.9' = {},
            '10to12.9' = {},
