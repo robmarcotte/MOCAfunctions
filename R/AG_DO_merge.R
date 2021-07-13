@@ -18,7 +18,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
 
   do_fix = switch(do_fix_reference,
                       '18to20' = do_fix_18to20,
-                      '15to17' = readRDS('filepath to 15to17.9 DO errors data'),
+                      '15to17' = do_fix_15to17,
                       '13to14' = readRDS('filepath to 13to14.9 DO errors data'),
                       '10to12' = readRDS('filepath to 10to12.9 DO errors data'),
                       '6to9' = readRDS('filepath to 6to9.9 DO errors data'),
