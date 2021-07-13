@@ -3,9 +3,18 @@
 # Function to clean up noldus data with a data frame of known errors.
 DO_cleaning_18to20 = function(noldus_data, manual_fix){
 
-  # MOCA 18to20 Noldus template had a typo for WalkLoad. Replace WalkLoad periods with proper format
-  noldus_data$Behavior = str_replace(noldus_data$Behavior, pattern = 'WalkLoad 4.5', replacement = 'WalkLoad (4.5')
-  noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Carrying Small Child 2.3\\) ', replacement = 'Carrying Small Child (2.3)')
+  # Custom DO typo fixes specific to MOCA Cohort Noldus Templates
+  switch(age_group,
+         '18to20' = {
+           noldus_data$Behavior = str_replace(noldus_data$Behavior, pattern = 'WalkLoad 4.5', replacement = 'WalkLoad (4.5')
+           noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Carrying Small Child 2.3\\) ', replacement = 'Carrying Small Child (2.3)')},
+         '15to17.9' = {
+           noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Active Video Games (2.4. 5.9)', replacement = 'Active Video Games (2.4, 5.9)')},
+         '13to14.9' = {},
+         '10to12.9' = {},
+         '6to9.9' = {},
+         '3to5.9' = {},
+         '1.5to2.9' = {})
 
   # Parse the compendium values from the coded behaviors and modifiers
   nums = c(unique(str_extract_all(noldus_data$Behavior, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)))

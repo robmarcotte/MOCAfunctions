@@ -13,7 +13,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
   do_fix = switch(do_fix_reference,
                   '18to20' = do_fix_18to20,
-                  '15to17.9' = readRDS('filepath to 15to17.9 DO errors data'),
+                  '15to17.9' = do_fix_15to17,
                   '13to14.9' = readRDS('filepath to 13to14.9 DO errors data'),
                   '10to12.9' = readRDS('filepath to 10to12.9 DO errors data'),
                   '6to9.9' = readRDS('filepath to 6to9.9 DO errors data'),
