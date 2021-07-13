@@ -26,6 +26,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
                       '1to2' = readRDS('filepath to 1.5to2.9 DO errors data'),
                       'custom' = readRDS(do_fix_custom_filepath))
 
+
   do_fix$METs = as.character(do_fix$METs)
 
   session_start_time = timestart
