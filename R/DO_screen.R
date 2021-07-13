@@ -5,8 +5,8 @@
 # Library dependencies: svDialogs, stringr, dplyr, tidyr
 
 DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
-                     do_fix_reference = c('18to20','15to17','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom', 'new'),
-                     age_group = c('18to20','15to17','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9'),
+                     do_fix_reference = c('18to20','15to17','13to14','10to12','6to9','3to5','1to2','custom', 'new'),
+                     age_group = c('18to20','15to17','13to14','10to12','6to9','3to5','1to2'),
                      do_fix_custom_filepath, do_fix_export_filepath,
                      do_screen = c('interactive','.csv'),
                      do_fix_update = c(TRUE, FALSE)){
@@ -14,11 +14,11 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
   do_fix = switch(do_fix_reference,
                   '18to20' = do_fix_18to20,
                   '15to17' = do_fix_15to17,
-                  '13to14.9' = readRDS('filepath to 13to14.9 DO errors data'),
-                  '10to12.9' = readRDS('filepath to 10to12.9 DO errors data'),
-                  '6to9.9' = readRDS('filepath to 6to9.9 DO errors data'),
-                  '3to5.9' = readRDS('filepath to 3to5.9 DO errors data'),
-                  '1.5to2.9' = readRDS('filepath to 1.5to2.9 DO errors data'),
+                  '13to14' = readRDS('filepath to 13to14.9 DO errors data'),
+                  '10to12' = readRDS('filepath to 10to12.9 DO errors data'),
+                  '6to9' = readRDS('filepath to 6to9.9 DO errors data'),
+                  '3to5' = readRDS('filepath to 3to5.9 DO errors data'),
+                  '1to2' = readRDS('filepath to 1.5to2.9 DO errors data'),
                   'custom' = readRDS(do_fix_custom_filepath),
                   'new' = 'create_new')
 
@@ -32,11 +32,11 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
              noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Carrying Small Child 2.3\\) ', replacement = 'Carrying Small Child (2.3)')},
            '15to17' = {
              noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Active Video Games (2.4. 5.9)', replacement = 'Active Video Games (2.4, 5.9)')},
-           '13to14.9' = {},
-           '10to12.9' = {},
-           '6to9.9' = {},
-           '3to5.9' = {},
-           '1.5to2.9' = {})
+           '13to14' = {},
+           '10to12' = {},
+           '6to9' = {},
+           '3to5' = {},
+           '1to2' = {})
 
 
     # Parse the compendium values from the coded behaviors and modifiers
@@ -85,7 +85,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
     # Fix template issues with behaviors
     switch(age_group,
            '18to20' = {},
-           '15to17.9' = {
+           '15to17' = {
              # Some old templates had wrong Behavior MET values, thus they need to be fixed
              do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'WalkLoad'), '4.5', do_data$Behavior_Compendium_MET)
              do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Walking'), '5.0', do_data$Behavior_Compendium_MET)
@@ -94,11 +94,11 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
              do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Crawling'), '6.0', do_data$Behavior_Compendium_MET)
              do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Jumping'), '4.7', do_data$Behavior_Compendium_MET)
              do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Dancing'), '4.0', do_data$Behavior_Compendium_MET)},
-           '13to14.9' = {},
-           '10to12.9' = {},
-           '6to9.9' = {},
-           '3to5.9' = {},
-           '1.5to2.9' = {})
+           '13to14' = {},
+           '10to12' = {},
+           '6to9' = {},
+           '3to5' = {},
+           '1to2' = {})
     # Find unique coding combinations
     coded_combos = unique(str_c(do_data$Behavior, do_data$Modifier2, do_data$Modifier1, sep = '_'))
 
@@ -265,12 +265,12 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
     # Need to fix this later since the internal DO fix data frames shouldn't be rewritten and any new do_fix dataframes should be exported to a custom filepath
     do_fix = switch(do_fix_reference,
                     '18to20' = do_fix_18to20,
-                    '15to17.9' = saveRDS(do_fix,'filepath to 15to17.9 DO errors data'),
-                    '13to14.9' = saveRDS(do_fix,'filepath to 13to14.9 DO errors data'),
-                    '10to12.9' = saveRDS(do_fix,'filepath to 10to12.9 DO errors data'),
-                    '6to9.9' = saveRDS(do_fix,'filepath to 6to9.9 DO errors data'),
-                    '3to5.9' = saveRDS(do_fix,'filepath to 3to5.9 DO errors data'),
-                    '1.5to2.9' = saveRDS(do_fix,'filepath to 1.5to2.9 DO errors data'),
+                    '15to17' = saveRDS(do_fix,'filepath to 15to17.9 DO errors data'),
+                    '13to14' = saveRDS(do_fix,'filepath to 13to14.9 DO errors data'),
+                    '10to12' = saveRDS(do_fix,'filepath to 10to12.9 DO errors data'),
+                    '6to9' = saveRDS(do_fix,'filepath to 6to9.9 DO errors data'),
+                    '3to5' = saveRDS(do_fix,'filepath to 3to5.9 DO errors data'),
+                    '1to2' = saveRDS(do_fix,'filepath to 1.5to2.9 DO errors data'),
                     'custom' = saveRDS(do_fix,do_fix_custom_filepath),
                     'new' = saveRDS(do_fix, do_fix_export_filepath))
 

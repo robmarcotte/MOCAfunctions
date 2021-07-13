@@ -1,7 +1,7 @@
 # DO_cleaning_18to20
 #
 # Function to clean up noldus data with a data frame of known errors.
-DO_cleaning_18to20 = function(noldus_data, manual_fix){
+DO_cleaning_18to20 = function(noldus_data, manual_fix, age_group = c('18to20','15to17','13to14','10to12','6to9','3to5','1to2')){
 
   # Custom DO typo fixes specific to MOCA Cohort Noldus Templates
   switch(age_group,

@@ -13,17 +13,17 @@
 #' Library dependencies: foreach, doParallel, stringr, lubridate, dplyr, tidyr, data.table, readxl
 
 AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, participant_id,
-                       do_fix_reference = c('18to20','15to17.9','13to14.9','10to12.9','6to9.9','3to5.9','1.5to2.9','custom'), do_fix_custom_filepath,
+                       do_fix_reference = c('18to20','15to17','13to14','10to12','6to9','3to5','1to2','custom'), do_fix_custom_filepath,
                        output_filepath, export = F, device_serial_calibrate_df = NA){
 
   do_fix = switch(do_fix_reference,
                       '18to20' = do_fix_18to20,
-                      '15to17.9' = readRDS('filepath to 15to17.9 DO errors data'),
-                      '13to14.9' = readRDS('filepath to 13to14.9 DO errors data'),
-                      '10to12.9' = readRDS('filepath to 10to12.9 DO errors data'),
-                      '6to9.9' = readRDS('filepath to 6to9.9 DO errors data'),
-                      '3to5.9' = readRDS('filepath to 3to5.9 DO errors data'),
-                      '1.5to2.9' = readRDS('filepath to 1.5to2.9 DO errors data'),
+                      '15to17' = readRDS('filepath to 15to17.9 DO errors data'),
+                      '13to14' = readRDS('filepath to 13to14.9 DO errors data'),
+                      '10to12' = readRDS('filepath to 10to12.9 DO errors data'),
+                      '6to9' = readRDS('filepath to 6to9.9 DO errors data'),
+                      '3to5' = readRDS('filepath to 3to5.9 DO errors data'),
+                      '1to2' = readRDS('filepath to 1.5to2.9 DO errors data'),
                       'custom' = readRDS(do_fix_custom_filepath))
 
   do_fix$METs = as.character(do_fix$METs)
@@ -49,7 +49,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
   noldus_data$METs = as.character(noldus_data$METs)
 
 
-  noldus_data =  MOCAfunctions::DO_cleaning_18to20(noldus_data, do_fix)
+  noldus_data =  MOCAfunctions::DO_cleaning_18to20(noldus_data, do_fix, age_group = do_fix_reference)
 
   noldus_data$Time =  MOCAfunctions::strip_time_from_fulldate(noldus_data$Timestamp)
 
