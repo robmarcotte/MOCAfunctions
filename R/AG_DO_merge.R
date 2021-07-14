@@ -29,6 +29,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
 
   do_fix$METs = as.character(do_fix$METs)
 
+
   session_start_time = timestart
   session_date = ymd(str_split(session_start_time, ' ', simplify = T)[,1])
 
