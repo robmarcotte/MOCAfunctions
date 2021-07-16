@@ -75,7 +75,7 @@ ag_epochr = function(ag_data_1sec,epoch = 60){
 
   epoch_data$VM = sqrt(epoch_data$Axis1^2 + epoch_data$Axis2^2 + epoch_data$Axis3^2)
 
-  epoch_data = epoch_data %>% dplyr::select(-index) %>% mutate(Timestamp = ymd_hms(Timestamp))
+  epoch_data = epoch_data %>% mutate(Timestamp = ymd_hms(Timestamp))
 
   return(epoch_data)
 
