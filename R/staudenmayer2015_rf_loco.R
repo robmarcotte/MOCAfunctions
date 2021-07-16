@@ -4,11 +4,11 @@
 #' @param   mods_filepath Filepath that contains rf.loc.model in an RData object. Assuming by default that model is already loaded in the environment.
 #' @param   samp_freq Sampling frequency of the raw accelerometer data. Default is 80 hz
 #' @param   epoch Non-overlapping window size in seconds. Default is 15-seconds
-#' @param   expand_1sec Binary indicator of whether only SedSphere estimates should be returned as a second-by-second vector
+#' @param   expand_1sec Binary indicator of whether only estimates should be returned as a second-by-second vector
 #'
-#' @return  Aggregated data in 15-second epochs with accelerometer values and SedSphere estimate
+#' @return  Aggregated data in 15-second epochs with accelerometer values and staudenmayer2015_rf_loco estimate
 #'
-#' @example sedsphere(acc_data_raw)
+#' @example staudenmayer2015_rf_loco(acc_data_raw)
 
 staudenmayer2015_rf_loco = function(acc_data_raw, mods_filepath = NA, samp_freq = 80, epoch = 15, expand_1sec = F){
   acc_data_raw$VMcorrG = abs(sqrt(acc_data_raw$AxisX^2 + acc_data_raw$AxisY^2 + acc_data_raw$AxisZ^2)-1)
@@ -38,7 +38,7 @@ staudenmayer2015_rf_loco = function(acc_data_raw, mods_filepath = NA, samp_freq 
   if(expand_1sec == T){
     Staudenmayer2015_Locomotion = data.frame(Timestamp = acc_data_raw$Timestamp[seq(1, n, by = samp_freq)],
                                              Staudenmayer2015_Locomotion = factor(rep(acc_data_raw.sum$acc_data_raw, each = epoch), levels =c('locomotion','non-locomotion'), labels =c('locomotion','non-locomotion'))[1:floor(n/samp_freq)])
-    return(SedSphere)
+    return(Staudenmayer2015_Locomotion)
 
   } else {
 
