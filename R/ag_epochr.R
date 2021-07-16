@@ -10,10 +10,13 @@ ag_epochr = function(ag_data_1sec,epoch = 60){
   new_rows = ceiling(rows/epoch)
 
   ag_data_1sec$index = rep(seq(1, new_rows, by = 1), each = epoch)[1:rows]
+  ag_data_1sec$Timestamp = as.character(ag_data_1sec$Timestamp)
 
   first_only_colnames = which(str_detect(colnames(ag_data_1sec), paste('file','stamp', 'Date','Time',sep = '|')))
 
   epoch_data = ag_data_1sec[seq(1, nrow(ag_data_1sec), by = epoch), first_only_colnames]
+
+  epoch_data$index = 1:nrow(epoch_data)
 
   count_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
                                                                      Axis1 = sum(Axis1, na.rm = T),
@@ -26,7 +29,7 @@ ag_epochr = function(ag_data_1sec,epoch = 60){
   # If there's step data,  reaggregate to epoch level
   if(any(str_detect(colnames(ag_data_1sec), 'Step'))){
     step_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
-                                                                       Steps = sum(Steps, na.rm = T)) %>% select(-index)
+                                                                       Steps = sum(Steps, na.rm = T))%>% select(-index)
 
     epoch_data = left_join(epoch_data, step_data)
   }
@@ -37,8 +40,7 @@ ag_epochr = function(ag_data_1sec,epoch = 60){
                                                                       `Inclinometer Off` = sum(`Inclinometer Off`, na.rm = T),
                                                                       `Inclinometer Standing` = sum(`Inclinometer Standing`, na.rm = T),
                                                                       `Inclinometer Sitting` = sum(`Inclinometer Sitting`, na.rm = T),
-                                                                      `Inclinometer Lying` = sum(`Inclinometer Lying`, na.rm = T)) %>%
-      select(-index)
+                                                                      `Inclinometer Lying` = sum(`Inclinometer Lying`, na.rm = T))%>% select(-index)
 
     epoch_data = left_join(epoch_data, inclinometer_data)
   }
@@ -46,8 +48,7 @@ ag_epochr = function(ag_data_1sec,epoch = 60){
   # If there's lux data, reaggregate to epoch level
   if(any(str_detect(colnames(ag_data_1sec), 'Lux'))){
     lux_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
-                                                                              Lux = mean(Lux, na.rm =T)) %>%
-      select(-index)
+                                                                              Lux = mean(Lux, na.rm =T)) %>% select(-index)
 
     epoch_data = left_join(epoch_data, lux_data)
   }
@@ -57,15 +58,15 @@ ag_epochr = function(ag_data_1sec,epoch = 60){
     count_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
                                                                        Axis1_LFE = sum(Axis1_LFE, na.rm = T),
                                                                        Axis2_LFE = sum(Axis2_LFE, na.rm = T),
-                                                                       Axis3_LFE = sum(Axis3_LFE, na.rm = T)) %>% select(-index) %>%
-      mutate(VM_LFE = sqrt(Axis1^2 + Axis2^2+ Axis3^2))
+                                                                       Axis3_LFE = sum(Axis3_LFE, na.rm = T)) %>%
+      mutate(VM_LFE = sqrt(Axis1^2 + Axis2^2+ Axis3^2))%>% select(-index)
 
     epoch_data = left_join(epoch_data, count_data)
 
     # If there's step data, also reaggregate to epoch level
     if(any(str_detect(colnames(ag_data_1sec), 'Step'))){
       step_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
-                                                                        Steps_LFE = sum(Steps_LFE, na.rm = T)) %>% select(-index)
+                                                                        Steps_LFE = sum(Steps_LFE, na.rm = T))%>% select(-index)
 
       epoch_data = left_join(epoch_data, step_data)
     }
@@ -74,6 +75,8 @@ ag_epochr = function(ag_data_1sec,epoch = 60){
   }
 
   epoch_data$VM = sqrt(epoch_data$Axis1^2 + epoch_data$Axis2^2 + epoch_data$Axis3^2)
+
+  epoch_data = epoch_data %>% dplyr::select(-index) %>% mutate(Timestamp = ymd_hms(Timestamp))
 
   return(epoch_data)
 
