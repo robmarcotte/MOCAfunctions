@@ -11,9 +11,9 @@ ag_epochr = function(ag_data_1sec,epoch = 60){
 
   ag_data_1sec$index = rep(seq(1, new_rows, by = 1), each = epoch)[1:rows]
 
-  first_only_colnames = which(str_detect(colnames(ag_data_1sec), paste('file','stamp', sep = '|')))
+  first_only_colnames = which(str_detect(colnames(ag_data_1sec), paste('file','stamp', 'Date','Time',sep = '|')))
 
-  epoch_data = ag_data_1sec[seq(1, nrow(ag_data_1sec), by = epoch), ..first_only_colnames]
+  epoch_data = ag_data_1sec[seq(1, nrow(ag_data_1sec), by = epoch), first_only_colnames]
 
   count_data = ag_data_1sec %>% group_by(index) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
                                                                      Axis1 = sum(Axis1, na.rm = T),
