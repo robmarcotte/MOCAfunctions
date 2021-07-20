@@ -12,9 +12,15 @@
 #'
 #' @example sedsphere(acc_data_raw)
 
-sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch = 15, expand_1sec = F, long_axis = 'y', interpolate = T){
+sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch = 15, expand_1sec = F, long_axis = 'y', interpolate = F){
   # Original method was developed using the sum of VMcorrG values from 100 Hz data. If samp_freq is not 100 Hz, need to interpolate/upsample to proper frequency
-  if(samp_freq != 100 & interpolate == T){
+  if(samp_freq != 100 & interpolate == T){ # Section is currently bugged with the interpolation -RM 7/19/2021
+
+    acc_data_raw = acc_data_raw %>% rename(HEADER_TIME_STAMP =Timestamp,
+                                           X = AxisX,
+                                           Y = AxisY,
+                                           Z = AxisZ) %>% select(HEADER_TIME_STAMP, X,Y,Z)
+
     acc_data_raw = MIMSunit::interpolate_signal(acc_data_raw)
     samp_freq = 100
   }
