@@ -45,6 +45,7 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
                            'y' = 3,
                            'z' = 4)
 
+
   acc_data_raw.sum$v.ang <- ifelse(acc_data_raw.sum[,long_axis_index] > 1, asin(1)*180/pi,
                                         ifelse(acc_data_raw.sum[,long_axis_index] < -1, asin(-1)*180/pi,
                                                asin(pmin(pmax(acc_data_raw.sum[,long_axis_index],-1.0),1.0))*180/pi))
