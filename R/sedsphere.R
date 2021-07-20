@@ -51,7 +51,7 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
 
   # 0 = Sedentary, 1 = Upright, 2 = MVPA Activity
   acc_data_raw.sum$SedSphere = ifelse(acc_data_raw.sum$sum.VMcorrG > VMcorrG_mod_15s,2,
-                                      ifelse(acc_data_raw.sum$v.ang <-15 15,1,0)) # modified from <-15 to >15 because angles below horizontal are 0 to +90deg based on above calculation and device orientation (+1g for arms straight down @ side)
+                                      ifelse(acc_data_raw.sum$v.ang <-15, 15,1,0)) # modified from <-15 to >15 because angles below horizontal are 0 to +90deg based on above calculation and device orientation (+1g for arms straight down @ side)
                                       #ifelse(acc_data_raw.sum$v.ang > 15,1,0)) # modified from <-15 to >15 because angles below horizontal are 0 to +90deg based on above calculation and device orientation (+1g for arms straight down @ side)
   acc_data_raw.sum$SedSphere = factor(acc_data_raw.sum$SedSphere, levels = c(0,1,2), labels =c('Sedentary','Upright','MVPA_Activity'))
 
