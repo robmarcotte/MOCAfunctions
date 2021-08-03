@@ -13,22 +13,12 @@ DO_criterion_calc = function(noldus_data, participant, samp_freq = 1, window = 1
     seconds_colindex = which(colnames(noldus_data) == seconds_colname)
 
     # Compute majority direct observations within sojourns
-    noldus_data.sum = noldus_data %>% dplyr::group_by_at(soj_colindex) %>% dplyr::summarize(sojourn_index = dplyr::first(.[[soj_colindex]]),# dplyr::first(step3_sojourn_index),
-                                                                                            sojourn_duration = dplyr::first(.[[seconds_colindex]]),# dplyr::first(step3_sojourn_duration),
-
+    noldus_data.sum = noldus_data %>% dplyr::group_by_at(soj_colindex) %>% dplyr::summarize(sojourn_index = dplyr::first(.[[soj_colindex]]), # dplyr::first(step3_sojourn_index),
+                                                                                            sojourn_duration = dplyr::first(.[[seconds_colindex]]), # dplyr::first(step3_sojourn_duration),
                                                                                             Behavior = majority_string(Behavior, piece = 'coded_strings'),
                                                                                             Modifier_1 = majority_string(Modifier_1, piece = 'coded_strings'),
                                                                                             Modifier_2 = majority_string(Modifier_2, piece = 'coded_strings'),
                                                                                             Omit_me = majority_string(Omit_me, piece = 'coded_strings'))
-
-    # Redacted since data.table interfering with data frame column index using a variable rather than integer
-    # noldus_data.sum <- data.frame(step3_sojourn_index = tapply(noldus_data$step3_sojourn_index, noldus_data[, soj_colindex], majority_string, piece = 'coded_strings'),
-    #                               step3_sojourn_duration = tapply(noldus_data$step3_sojourn_duration, noldus_data[, soj_colindex], majority_string, piece = 'coded_strings'),
-    #                               Behavior = tapply(noldus_data$Behavior, noldus_data[,soj_colindex], majority_string, piece = 'coded_strings'),
-    #                               Modifier_1 = tapply(noldus_data$Modifier_1, noldus_data[,soj_colindex], majority_string, piece = 'coded_strings'),
-    #                               Modifier_2 = tapply(noldus_data$Modifier_2, noldus_data[,soj_colindex], majority_string, piece = 'coded_strings'),
-    #                               Omit_me = tapply(noldus_data$Omit_me, noldus_data[,soj_colindex], majority_string, piece = 'coded_strings'),
-    #                               stringsAsFactors = F)
 
     if(intensity == T){
 

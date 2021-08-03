@@ -6,6 +6,7 @@
 #' @param step2_nest_length Window length for classifying inactive vs active using random forest model
 #' @param step3_nest_length Window length for partitioning excessively long sojourns as determined by step3_orig_soj_length_min
 #' @param step3_orig_soj_length_min Maximum sojourn window duration allowed until partitioning into nested sojourns
+#' @param min_soj_length Minimum sojourn window duration allowed. Any sojourns smaller will be combined with the
 #'
 #' @example
 #'
@@ -19,7 +20,8 @@ soj_g = function(data = NA, export_format = 'session', freq = 80, step1_sd_thres
   }
 
   # Step 1 - Identify likely inactive periods
-  data_summary = data.frame(index = 1:ceiling(nrow(data)/freq), sd_vm = rowSds(matrix(data$VM, ncol = freq, byrow = T)))
+  data$index = rep(1:ceiling(nrow(data)/freq), each = freq)[1:nrow(data)]
+  data_summary = data %>% group_by(index) %>% dplyr::summarize(sd_vm = sd(VM, na.rm = T))
   data_summary$step1_estimate = ifelse(data_summary$sd_vm <=step1_sd_threshold, 1, 0) # 1 = inactive, 0 = unclassified
 
   seconds_index = seq(1, nrow(data), by = freq)
@@ -32,30 +34,36 @@ soj_g = function(data = NA, export_format = 'session', freq = 80, step1_sd_thres
   data_summary$step2_sojourn_index = data.table::rleid(data_summary$step1_estimate)
   data_summary$step2_sojourn_duration[diffs] = rle(data_summary$step2_sojourn_index)[[1]]
   data_summary$step2_sojourn_duration = zoo::na.locf(data_summary$step2_sojourn_duration)
-  data_summary$step2_sojourn_index = sort(unlist(tapply(data_summary$step2_sojourn_index, data_summary$step2_sojourn_index, nest_sojourn, nest_length = step2_nest_length)))
+  data_summary = data_summary %>% group_by(step2_sojourn_index) %>% mutate(step2_sojourn_index = nest_sojourn(step2_sojourn_index, orig_soj_length_min = step2_nest_length, nest_length = step2_nest_length))
+  # data_summary$step2_sojourn_index = sort(unlist(tapply(data_summary$step2_sojourn_index, data_summary$step2_sojourn_index, nest_sojourn, nest_length = step2_nest_length)))
 
+  # Repopulate original data with step1 and 2 sojourn ID
   data$VM_sd_1sec = rep(data_summary$sd_vm, each = freq)[1:nrow(data)]
   data$step1_estimate = rep(data_summary$step1_estimate, each = freq)[1:nrow(data)]
   data$step2_sojourn_index = rep(data_summary$step2_sojourn_index, each = freq)[1:nrow(data)]
   data$step2_sojourn_duration = rep(data_summary$step2_sojourn_duration, each = freq)[1:nrow(data)]
 
+  # Compute features within nested sojourns
   ag_step2_summary = ag_feature_calc(data, samp_freq = freq, window = 'sojourns', soj_colname = 'step2_sojourn_index', seconds_colname = 'step2_sojourn_duration')
   ag_step2_summary$step2_durations = rle(data_summary$step2_sojourn_index)[[1]]
-
   ag_step2_summary$step2_estimate = predict(MOCAModelData::sojg_stage2_unclassified_rf, newdata = ag_step2_summary, type = 'class')
 
+  # Append the step2 activity state estimate to the 1-sec summary dataframe
   data_summary$step2_estimate = rep(ag_step2_summary$step2_estimate, times = ag_step2_summary$step2_durations)
-  data_summary$step2_estimate = ifelse(data_summary$step1_estimate == 1, 1, data_summary$step2_estimate)
+  # data_summary$step2_estimate = ifelse(data_summary$step1_estimate == 1, 1, data_summary$step2_estimate) # Repopulate inactive periods from step 1 in case the step2 classified it differently
   data_summary$step3_sojourn_index = NA
   data_summary$step3_sojourn_duration = NA
   diffs = which((dplyr::lag(data_summary$step2_estimate) != data_summary$step2_estimate) == T)
   diffs = c(1, diffs)
 
-  data_summary$step2_estimate = factor(data_summary$step2_estimate, levels = c(1,2), labels =c('Stationary','Active'))
+  # Verify that labels under step2_estimate are character dummy variables
+  if(all(!is.na(as.numeric(levels(data_summary$step2_estimate)))))
+    data_summary$step2_estimate = factor(data_summary$step2_estimate, levels = c(1,2), labels =c('Stationary','Active'))
   data_summary$step3_sojourn_index = data.table::rleid(data_summary$step2_estimate)
   data_summary$step3_sojourn_duration[diffs] = rle(data_summary$step3_sojourn_index)[[1]]
   data_summary$step3_sojourn_duration =zoo::na.locf(data_summary$step3_sojourn_duration)
-  data_summary$step3_sojourn_index = sort(unlist(tapply(data_summary$step3_sojourn_index, data_summary$step3_sojourn_index, nest_sojourn2, orig_soj_length_min = step3_orig_soj_length_min, nest_length = step3_nest_length)))
+  data_summary = data_summary %>% group_by(step3_sojourn_index) %>% mutate(step3_sojourn_index = nest_sojourn(step3_sojourn_index, orig_soj_length_min = step3_orig_soj_length_min, nest_length = step3_nest_length))
+  # data_summary$step3_sojourn_index = sort(unlist(tapply(data_summary$step3_sojourn_index, data_summary$step3_sojourn_index, nest_sojourn2, orig_soj_length_min = step3_orig_soj_length_min, nest_length = step3_nest_length)))
 
   data$step2_estimate = rep(data_summary$step2_estimate, each = freq)[1:nrow(data)]
   data$step3_sojourn_index = rep(data_summary$step3_sojourn_index, each = freq)[1:nrow(data)]

@@ -4,8 +4,8 @@
 #
 # Library dependencies:
 
-nest_sojourn = function(sojourn, nest_length = 2, step_by = .00001){
-  if(length(sojourn) > nest_length){
+nest_sojourn = function(sojourn, orig_soj_length_min = 180, nest_length = 60, step_by = .00001){
+  if(length(sojourn) > orig_soj_length_min){
     n = ceiling(length(sojourn)/nest_length)-1
 
     additives = seq(0, n/10, by = step_by)

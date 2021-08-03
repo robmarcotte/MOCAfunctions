@@ -10,7 +10,7 @@
 #' Library dependencies: tidyverse, lubridate, data.table
 
 
-ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80,window = 15, soj_colname = NA, seconds_colname = NA, inactive_threshold = .1){
+ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80,window = 15, soj_colname = NA, seconds_colname = NA, inactive_threshold = .00375){
 
   n <- dim(ag_data_raw_wrist)[1]
 
@@ -23,7 +23,8 @@ ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80,window
     seconds_colindex = which(colnames(ag_data_raw_wrist) == seconds_colname)
 
     # Compute features within sojourns using dplyr
-    ag_data_raw_wrist.sum = ag_data_raw_wrist %>% dplyr::group_by_at(soj_colindex) %>% dplyr::summarize(sojourn = dplyr::first(.[[soj_colindex]]),
+    ag_data_raw_wrist.sum = ag_data_raw_wrist %>% dplyr::group_by_at(soj_colindex) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
+                                                                                                        sojourn = dplyr::first(.[[soj_colindex]]),
                                                                                                         seconds = dplyr::first(.[[seconds_colindex]]),
                                                                                                         perc.soj.inactive = mean(VM_sd_1sec<=inactive_threshold),
                                                                                                         mean.vm = mean(VM, na.rm = T),
@@ -53,22 +54,14 @@ ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80,window
     ag_data_raw_wrist$epoch <- rep(1:epoch,each=window*samp_freq)[1:n]
 
     # Compute features within epochs
-    ag_data_raw_wrist.sum <- data.frame(Participant = tapply(ag_data_raw_wrist$Participant, ag_data_raw_wrist$epoch, data.table::first),
-                                        Date = tapply(ag_data_raw_wrist$Date, ag_data_raw_wrist$epoch, data.table::first),
-                                        Time = tapply(ag_data_raw_wrist$Time, ag_data_raw_wrist$epoch, data.table::first),
-                                        Behavior = tapply(ag_data_raw_wrist$Behavior, ag_data_raw_wrist$epoch, majority_string, piece = 'coded_strings'),
-                                        Modifier_1 = tapply(ag_data_raw_wrist$Modifier_1, ag_data_raw_wrist$epoch, majority_string, piece = 'coded_strings'),
-                                        Modifier_2 = tapply(ag_data_raw_wrist$Modifier_2, ag_data_raw_wrist$epoch, majority_string, piece = 'coded_strings'),
-                                        Stationary = tapply(ag_data_raw_wrist$Stationary, ag_data_raw_wrist$epoch, majority_string, piece = 'coded_strings'),
-                                        Omit_me = tapply(ag_data_raw_wrist$Omit_me, ag_data_raw_wrist$epoch, data.table::first),
-                                        mean.vm=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist$epoch,mean,na.rm=T),
-                                        sd.vm=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist$epoch,sd,na.rm=T),
-                                        mean.ang=tapply(ag_data_raw_wrist$v.ang,ag_data_raw_wrist$epoch,mean,na.rm=T),
-                                        sd.ang=tapply(ag_data_raw_wrist$v.ang,ag_data_raw_wrist$epoch,sd,na.rm=T),
-                                        p625=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist$epoch,pow.625),
-                                        dfreq=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist$epoch,dom.freq),
-                                        ratio.df=tapply(ag_data_raw_wrist$VM,ag_data_raw_wrist$epoch,frac.pow.dom.freq),
-                                        stringsAsFactors = F)
+    ag_data_raw_wrist.sum <- ag_data_raw_wrist %>% dplyr::group_by_at(epoch) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
+                                                                                                         mean.vm = mean(VM, na.rm = T),
+                                                                                                         sd.vm = sd(VM, na.rm = T),
+                                                                                                         mean.ang = mean(v.ang, na.rm = T),
+                                                                                                         sd.ang = sd(v.ang, na.rm = T),
+                                                                                                         p625 = pow.625(VM),
+                                                                                                         dfreq = dom.freq(VM),
+                                                                                                         ratio.df = frac.pow.dom.freq(VM))
 
   }
 
