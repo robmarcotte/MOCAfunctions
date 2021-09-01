@@ -12,6 +12,7 @@
 
 staudenmayer2015_rf_intensity = function(acc_data_raw, mods_filepath = NA, samp_freq = 80, epoch = 15, expand_1sec = F){
 
+
   n = nrow(acc_data_raw)
 
   acc_data_raw.sum = ag_feature_calc(acc_data_raw, window = epoch)
