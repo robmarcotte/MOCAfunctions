@@ -41,7 +41,7 @@ crouter2010 = function(acc_data_counts, epoch = 10, expand_1sec = F){
   }
 
   # Average MET value of 6 consecutive 10-second epochs within each minute is calculated to obtain average MET value for that minute
-  acc_data_new$index = rep(seq(1, (nrow(acc_data_new)/(60/epoch))), each = (60/epoch))
+  acc_data_new$index = rep(seq(1, ceiling((nrow(acc_data_new)/(60/epoch)))), each = (60/epoch))[1:nrow(acc_data_new)]
 
   acc_data_minute = acc_data_new %>% group_by(index) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
                                                                           METs = mean(METs, na.rm = T))
