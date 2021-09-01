@@ -60,6 +60,7 @@ ag_epochr = function(ag_data_1sec,epoch = 60){
                                                                        Axis3_LFE = sum(Axis3_LFE, na.rm = T)) %>%
       mutate(VM_LFE = sqrt(Axis1_LFE^2 + Axis2_LFE^2+ Axis3_LFE^2))%>% select(-index)
 
+
     epoch_data = left_join(epoch_data, count_data)
 
     # If there's step data, also reaggregate to epoch level
