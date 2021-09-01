@@ -58,7 +58,7 @@ ag_epochr = function(ag_data_1sec,epoch = 60){
                                                                        Axis1_LFE = sum(Axis1_LFE, na.rm = T),
                                                                        Axis2_LFE = sum(Axis2_LFE, na.rm = T),
                                                                        Axis3_LFE = sum(Axis3_LFE, na.rm = T)) %>%
-      mutate(VM_LFE = sqrt(Axis1^2 + Axis2^2+ Axis3^2))%>% select(-index)
+      mutate(VM_LFE = sqrt(Axis1_LFE^2 + Axis2_LFE^2+ Axis3_LFE^2))%>% select(-index)
 
     epoch_data = left_join(epoch_data, count_data)
 
