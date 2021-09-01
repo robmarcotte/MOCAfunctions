@@ -31,5 +31,4 @@ swartz2000 = function(acc_data_counts, sed_cp = 101, mpa_cp = 574, vpa_cp = 4945
     return(acc_data_new)
 
   }
-
 }
