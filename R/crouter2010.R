@@ -60,5 +60,4 @@ crouter2010 = function(acc_data_counts, epoch = 10, expand_1sec = F){
     return(acc_data_minute)
 
   }
-
 }
