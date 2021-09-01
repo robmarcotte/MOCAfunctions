@@ -22,7 +22,7 @@ sasaki2011 = function(acc_data_counts, sed_cp = 101, mpa_cp = 2690, vpa_cp = 616
 
   if(expand_1sec == T){
     Sasaki2011 = data.frame(Timestamp = acc_data_counts$Timestamp,
-                            VM_60sec = rep(acc_data_new$VM, each= epoch),
+                            VM_60sec = rep(acc_data_new$VM, each= epoch)[1:nrow(acc_data_counts)],,
                             Sasaki2011 = factor(rep(acc_data_new$Sasaki2011, each = epoch), levels =c('Sedentary','LPA','MPA','VPA'), labels =c('Sedentary','LPA','MPA','VPA'))[1:nrow(acc_data_counts)])
     return(Sasaki2011)
 

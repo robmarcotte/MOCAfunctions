@@ -22,7 +22,7 @@ swartz2000 = function(acc_data_counts, sed_cp = 101, mpa_cp = 574, vpa_cp = 4945
 
   if(expand_1sec == T){
     Swartz2000 = data.frame(Timestamp = acc_data_counts$Timestamp,
-                            Axis1_60sec = rep(acc_data_new$Axis1, each = epoch),
+                            Axis1_60sec = rep(acc_data_new$Axis1, each = epoch)[1:nrow(acc_data_counts)],,
                             Swartz2000 = factor(rep(acc_data_new$Swartz2000, each = epoch), levels =c('Sedentary','LPA','MPA','VPA'), labels =c('Sedentary','LPA','MPA','VPA'))[1:nrow(acc_data_counts)])
     return(Swartz2000)
 

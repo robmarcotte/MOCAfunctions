@@ -22,7 +22,7 @@ freedson1998 = function(acc_data_counts, sed_cp = 101, mpa_cp = 1952, vpa_cp = 5
 
   if(expand_1sec == T){
     Freedson1998 = data.frame(Timestamp = acc_data_counts$Timestamp,
-                              Axis1_60sec = rep(acc_data_new$Axis1, each = epoch),
+                              Axis1_60sec = rep(acc_data_new$Axis1, each = epoch)[1:nrow(acc_data_counts)],
                               Freedson1998 = factor(rep(acc_data_new$Freedson1998, each = epoch), levels =c('Sedentary','LPA','MPA','VPA'), labels =c('Sedentary','LPA','MPA','VPA'))[1:nrow(acc_data_counts)])
     return(Freedson1998)
 
