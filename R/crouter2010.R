@@ -52,6 +52,7 @@ crouter2010 = function(acc_data_counts, epoch = 10, expand_1sec = F){
     Crouter2010 = data.frame(Timestamp = acc_data_counts$Timestamp,
                              METs = rep(acc_data_minute$METs, each = 60),
                              Crouter2010 = factor(rep(acc_data_minute$Crouter2010, each = 60), levels =c('Sedentary','LPA','MVPA'), labels =c('Sedentary','LPA','MVPA'))[1:nrow(acc_data_counts)])
+
     return(Crouter2010)
 
   } else {
