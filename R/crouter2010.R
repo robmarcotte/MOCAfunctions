@@ -34,24 +34,29 @@ crouter2010 = function(acc_data_counts, epoch = 10, expand_1sec = F){
     } else {
       acc_data_new$METs[i] = ifelse(acc_data_new$CV[i] <= 10,
                                  2.294275*(exp(0.00084679*acc_data_new$Axis1[i])),
-                                 0.749395+(.716431*ln(acc_data_new$Axis1[i]))-
+                                 0.749395+(0.716431*ln(acc_data_new$Axis1[i]))-
                                    (0.179874*ln(acc_data_new$Axis1[i]))+
-                                   (0.03173*(ln(acc_data_new$Axis1[i])^3)))
+                                   (0.033173*(ln(acc_data_new$Axis1[i])^3)))
     }
   }
 
-  acc_data_new$Crouter2010 = factor(cut(acc_data_new$METs, breaks = c(-Inf, 1.51, 3, 6, Inf), labels = c('Sedentary','LPA','MPA','VPA'), right = F), levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA'))
+  # Average MET value of 6 consecutive 10-second epochs within each minute is calculated to obtain average MET value for that minute
+  acc_data_new$index = rep(seq(1, (nrow(acc_data_new)/(60/epoch))), each = (60/epoch))
+
+  acc_data_minute = acc_data_new %>% group_by(index) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
+                                                                          METs = mean(METs, na.rm = T))
+
+  acc_data_minute$Crouter2010 = factor(cut(acc_data_minute$METs, breaks = c(-Inf, 1.51, 3, 6, Inf), labels = c('Sedentary','LPA','MPA','VPA'), right = F), levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA'))
 
   if(expand_1sec == T){
     Crouter2010 = data.frame(Timestamp = acc_data_counts$Timestamp,
-                             Axis1_10sec = rep(acc_data_new$Axis1, each = epoch),
-                             CV_10sec = rep(acc_data_new$CV, each = epoch),
-                             Crouter2010 = factor(rep(acc_data_new$Crouter2010, each = epoch), levels =c('Sedentary','LPA','MVPA'), labels =c('Sedentary','LPA','MVPA'))[1:nrow(acc_data_counts)])
+                             METs = rep(acc_data_minute$METs, each = 60),
+                             Crouter2010 = factor(rep(acc_data_minute$Crouter2010, each = 60), levels =c('Sedentary','LPA','MVPA'), labels =c('Sedentary','LPA','MVPA'))[1:nrow(acc_data_counts)])
     return(Crouter2010)
 
   } else {
 
-    return(acc_data_new)
+    return(acc_data_minute)
 
   }
 
