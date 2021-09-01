@@ -54,7 +54,7 @@ ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80,window
     ag_data_raw_wrist$epoch <- rep(1:epoch,each=window*samp_freq)[1:n]
 
     # Compute features within epochs
-    ag_data_raw_wrist.sum <- ag_data_raw_wrist %>% dplyr::group_by_at(epoch) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
+    ag_data_raw_wrist.sum <- ag_data_raw_wrist %>% dplyr::group_by(epoch) %>% dplyr::summarize(Timestamp = dplyr::first(Timestamp),
                                                                                                          mean.vm = mean(VM, na.rm = T),
                                                                                                          sd.vm = sd(VM, na.rm = T),
                                                                                                          mean.ang = mean(v.ang, na.rm = T),

@@ -10,7 +10,8 @@
 #'
 #' @example staudenmayer2015_rf_loco(acc_data_raw)
 
-staudenmayer2015_rf_loco = function(acc_data_raw, mods_filepath = NA, samp_freq = 80, epoch = 15, expand_1sec = F){
+staudenmayer2015_rf_intensity = function(acc_data_raw, mods_filepath = NA, samp_freq = 80, epoch = 15, expand_1sec = F){
+
   acc_data_raw.sum = ag_feature_calc(acc_data_raw, window = epoch)
 
   # acc_data_raw$VMcorrG = abs(sqrt(acc_data_raw$AxisX^2 + acc_data_raw$AxisY^2 + acc_data_raw$AxisZ^2)-1)
@@ -36,12 +37,12 @@ staudenmayer2015_rf_loco = function(acc_data_raw, mods_filepath = NA, samp_freq 
     load(mods_filepath)
   }
 
-  acc_data_raw.sum$loco.rf <- factor(predict(rf.loc.model, newdata=acc_data_raw.sum, type="class"), levels =c('locomotion','non-locomotion'), labels =c('locomotion','non-locomotion'))
+  acc_data_raw.sum$intensity.rf = factor(predict(rf.combo.model, newdata=acc_data_raw.sum, type="class"), levels =c('S','L','M','V'), labels = c('Sedentary','LPA','MPA','VPA'))
 
   if(expand_1sec == T){
-    Staudenmayer2015_Locomotion = data.frame(Timestamp = acc_data_raw$Timestamp[seq(1, n, by = samp_freq)],
-                                             Staudenmayer2015_Locomotion = factor(rep(acc_data_raw.sum$loco.rf, each = epoch), levels =c('locomotion','non-locomotion'), labels =c('locomotion','non-locomotion'))[1:floor(n/samp_freq)])
-    return(Staudenmayer2015_Locomotion)
+    Staudenmayer2015_Intensity = data.frame(Timestamp = acc_data_raw$Timestamp[seq(1, n, by = samp_freq)],
+                                             Staudenmayer2015_Intensity = factor(rep(acc_data_raw.sum$intensity.rf, each = epoch), levels =c('Sedentary','LPA','MPA','VPA'), labels =c('Sedentary','LPA','MPA','VPA'))[1:floor(n/samp_freq)])
+    return(Staudenmayer2015_Intensity)
 
   } else {
 
