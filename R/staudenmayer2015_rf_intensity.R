@@ -33,6 +33,7 @@ staudenmayer2015_rf_intensity = function(acc_data_raw, mods_filepath = NA, samp_
   #                                dfreq=tapply(acc_data_raw$VM,acc_data_raw$min,dom.freq),
   #                                ratio.df=tapply(acc_data_raw$VM,acc_data_raw$min,frac.pow.dom.freq))
 
+
   if(!is.na(mods_filepath)){
     load(mods_filepath)
   }
