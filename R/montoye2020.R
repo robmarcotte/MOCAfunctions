@@ -21,6 +21,7 @@ montoye2020 = function(acc_data_counts, sed_cp = 2859, mvpa_cp = 3940, epoch = 6
 
   if(expand_1sec == T){
     Montoye2020 = data.frame(Timestamp = acc_data_counts$Timestamp,
+                             VM_60sec = rep(acc_data_new$VM, each = epoch),
                              Montoye2020 = factor(rep(acc_data_new$Montoye2020, each = epoch), levels =c('Sedentary','LPA','MVPA'), labels =c('Sedentary','LPA','MVPA'))[1:nrow(acc_data_counts)])
     return(Montoye2020)
 
