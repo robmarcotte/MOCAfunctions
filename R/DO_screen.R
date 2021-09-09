@@ -153,10 +153,18 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
         for(i in met_errors){
           print(paste('File ', iii, ' of ', length(do_filepaths),': MET Error 1 of ', length(met_errors),' --> ',need_to_screen$Behavior[i], ', ', need_to_screen$Modifier2[i], ', ', need_to_screen$Modifier1[i], ' METs was coded.', sep = ''))
           print(paste('File ', iii, ' of ', length(do_filepaths),': METs should have been either the Behavior Compendium (', need_to_screen$Behavior_Compendium_MET[i], ') or Activity Compendium (', need_to_screen$Activity_Compendium_MET[i],') METs', sep = ''))
-          met_fix = readline('File ', iii, ' of ', length(do_filepaths),': Enter the proper MET value for the DO combination above: ')
-          while(is.na(as.numeric(met_fix))){
-            met_fix = readline('File ', iii, ' of ', length(do_filepaths),': Entry needs to be a number. Enter the proper MET value for the DO combination above: ')
+          met_fix = readline(paste('File ', iii, ' of ', length(do_filepaths),': Enter the proper MET value for the DO combination above: ', sep= ''))
+
+          if(age_group != '1to5'){
+            while(is.na(as.numeric(met_fix))){
+              met_fix = readline(paste('File ', iii, ' of ', length(do_filepaths),': Entry needs to be a number. Enter the proper MET value for the DO combination above: ', sep = ''))
+            }
+          } else {
+            while((met_fix %in% c('Sed','Light','Mod','Vig')) == F){
+              met_fix = readline(paste('File ', iii, ' of ', length(do_filepaths),': Entry needs to be Sed, Light, Mod, or Vig. Enter the proper MET value for the DO combination above: ', sep = ''))
+            }
           }
+
           need_to_screen$MET_Fix[i] = met_fix
         }
 
@@ -167,7 +175,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
           behav_error = readline(paste('File ', iii, ' of ', length(do_filepaths),': Is this an IMPLAUSIBLE behavior? (Type 1 for "Yes, this is an error" or 0 for "No, this is reasonable", then press Enter): ', sep = ''))
 
           while(is.na(as.numeric(behav_error)) | abs(as.numeric(behav_error)) > 1){
-            print('File ', iii, ' of ', length(do_filepaths),': Entry needs to be either 1 or 0.')
+            print(paste('File ', iii, ' of ', length(do_filepaths),': Entry needs to be either 1 or 0.', sep = ''))
             print(paste('File ', iii, ' of ', length(do_filepaths),': ', need_to_screen$Behavior[i], ' while ', need_to_screen$Modifier2[i], ' was coded (Whole Body Movement and Activity Type, respectively)', sep = ''))
             behav_error = readline(paste('File ', iii, ' of ', length(do_filepaths),': Is this an IMPLAUSIBLE behavior? (Type 1 for "Yes, this is an error" or 0 for "No, this is reasonable", then press Enter): ', sep = ''))
 
