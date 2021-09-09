@@ -260,6 +260,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
     }
 
+
     error_indicator = do_fix %>% dplyr::select(Behavior, Modifier_2, METs, Error_Present, Reason) %>%
       dplyr::rename(Modifier2 = Modifier_2, Modifier1 = METs) %>% dplyr::filter(str_detect(Reason, 'Behav/Act Combo'))
 
