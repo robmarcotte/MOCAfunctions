@@ -301,8 +301,6 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
                     'custom' = saveRDS(do_fix,do_fix_custom_filepath),
                     'new' = saveRDS(do_fix, do_fix_export_filepath))
 
-
-
   }
 }
 
