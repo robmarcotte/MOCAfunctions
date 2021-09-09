@@ -36,7 +36,6 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
            '6to9' = {},
            '1to5' = {})
 
-
     # Parse the compendium values from the coded behaviors and modifiers
     if(age_group != '1to5'){
       nums = c(unique(str_extract_all(noldus_data$Behavior, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)))
