@@ -5,8 +5,8 @@
 # Library dependencies: svDialogs, stringr, dplyr, tidyr
 
 DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
-                     do_fix_reference = c('18to20','15to17','13to14','10to12','6to9','3to5','1to2','custom', 'new'),
-                     age_group = c('18to20','15to17','13to14','10to12','6to9','3to5','1to2'),
+                     do_fix_reference = c('18to20','15to17','13to14','10to12','6to9','1to5','custom', 'new'),
+                     age_group = c('18to20','15to17','13to14','10to12','6to9','1to5'),
                      do_fix_custom_filepath, do_fix_export_filepath,
                      do_screen = c('interactive','.csv'),
                      do_fix_update = c(TRUE, FALSE)){
@@ -17,8 +17,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
                   '13to14' = readRDS('filepath to 13to14.9 DO errors data'),
                   '10to12' = readRDS('filepath to 10to12.9 DO errors data'),
                   '6to9' = readRDS('filepath to 6to9.9 DO errors data'),
-                  '3to5' = readRDS('filepath to 3to5.9 DO errors data'),
-                  '1to2' = readRDS('filepath to 1.5to2.9 DO errors data'),
+                  '1to5' = readRDS('filepath to 1to5.9 DO errors data'),
                   'custom' = readRDS(do_fix_custom_filepath),
                   'new' = 'create_new')
 
@@ -35,39 +34,56 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
            '13to14' = {},
            '10to12' = {},
            '6to9' = {},
-           '3to5' = {},
-           '1to2' = {})
+           '1to5' = {})
 
 
     # Parse the compendium values from the coded behaviors and modifiers
-    nums = c(unique(str_extract_all(noldus_data$Behavior, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)))
-    if(any(nums == '', na.rm = T)){
-      nums = nums[-which(nums =='')]
+    if(age_group != '1to5'){
+      nums = c(unique(str_extract_all(noldus_data$Behavior, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)))
+      if(any(nums == '', na.rm = T)){
+        nums = nums[-which(nums =='')]
+      }
+      if(length(nums) == 0)
+        nums = 'UNIQUE NO NUMS'
+      behavior = str_replace_all(noldus_data$Behavior, paste(nums, collapse = '|'), '')
+      behavior = str_trim(str_replace_all(behavior, '[:punct:]', ''))
+
+      behavior_compendium = str_extract_all(noldus_data$Behavior, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)
+      behavior_compendium[behavior_compendium == ''] = 'NA'
+      behavior_compendium = apply(behavior_compendium, 1, str_c, collapse = ', ')
+      behavior_compendium = str_replace_all(behavior_compendium, ', NA', '')
+
+      nums = c(unique(str_extract_all(noldus_data$Modifier_2, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)))
+      if(any(nums == '', na.rm = T)){
+        nums = nums[-which(nums =='')]
+      }
+      if(length(nums) == 0)
+        nums = 'UNIQUE NO NUMS'
+      modifier2 = str_replace_all(noldus_data$Modifier_2, paste(nums, collapse = '|'), '')
+      modifier2 = str_trim(str_replace_all(modifier2, '[:punct:]', ''))
+
+      modifier2_compendium = str_extract_all(noldus_data$Modifier_2, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)
+      modifier2_compendium[modifier2_compendium == ''] = 'NA'
+      modifier2_compendium = apply(modifier2_compendium, 1, str_c, collapse = ', ')
+      modifier2_compendium = str_replace_all(modifier2_compendium, ', NA', '')
+    } else {
+      # Different because intensity information is categorical not numeric METs
+
+      # Handle the behavior variable
+      behavior = str_split(noldus_data$Behavior, ' \\(', simplify = T)[,1]
+
+      behavior_compendium = str_split(noldus_data$Behavior, ' \\(', simplify = T)[,2]
+
+      # Need to remove close parentheses
+      behavior_compendium = str_replace(behavior_compendium, '\\)','')
+
+      # Handle the modifier 2 or activity type variable
+      modifier2 = str_split(noldus_data$Modifier_2, ' \\(', simplify = T)[,1]
+      modifier2_compendium = str_split(noldus_data$Modifier_2, ' \\(', simplify = T)[,2]
+
+      # Need to remove close parentheses
+      modifier2_compendium = str_replace(modifier2_compendium, '\\)','')
     }
-    if(length(nums) == 0)
-      nums = 'UNIQUE NO NUMS'
-    behavior = str_replace_all(noldus_data$Behavior, paste(nums, collapse = '|'), '')
-    behavior = str_trim(str_replace_all(behavior, '[:punct:]', ''))
-
-    behavior_compendium = str_extract_all(noldus_data$Behavior, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)
-    behavior_compendium[behavior_compendium == ''] = 'NA'
-    behavior_compendium = apply(behavior_compendium, 1, str_c, collapse = ', ')
-    behavior_compendium = str_replace_all(behavior_compendium, ', NA', '')
-
-    nums = c(unique(str_extract_all(noldus_data$Modifier_2, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)))
-    if(any(nums == '', na.rm = T)){
-      nums = nums[-which(nums =='')]
-    }
-    if(length(nums) == 0)
-      nums = 'UNIQUE NO NUMS'
-    modifier2 = str_replace_all(noldus_data$Modifier_2, paste(nums, collapse = '|'), '')
-    modifier2 = str_trim(str_replace_all(modifier2, '[:punct:]', ''))
-
-    modifier2_compendium = str_extract_all(noldus_data$Modifier_2, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)
-    modifier2_compendium[modifier2_compendium == ''] = 'NA'
-    modifier2_compendium = apply(modifier2_compendium, 1, str_c, collapse = ', ')
-    modifier2_compendium = str_replace_all(modifier2_compendium, ', NA', '')
-
     do_data = data.frame(Time_Relative_sf = noldus_data$Time_Relative_sf,
                          Behavior = behavior,
                          Modifier2 = modifier2,
@@ -259,18 +275,18 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
   }
 
 
-  if(do_fix_update == T){
+  if(do_fix_update == T & (do_fix_reference == 'custom' | do_fix_reference == 'new')){
     do_fix = do_fix %>% arrange(Behavior, Modifier_2)
 
     # Need to fix this later since the internal DO fix data frames shouldn't be rewritten and any new do_fix dataframes should be exported to a custom filepath
     do_fix = switch(do_fix_reference,
-                    '18to20' = do_fix_18to20,
-                    '15to17' = saveRDS(do_fix,'filepath to 15to17.9 DO errors data'),
-                    '13to14' = saveRDS(do_fix,'filepath to 13to14.9 DO errors data'),
-                    '10to12' = saveRDS(do_fix,'filepath to 10to12.9 DO errors data'),
-                    '6to9' = saveRDS(do_fix,'filepath to 6to9.9 DO errors data'),
-                    '3to5' = saveRDS(do_fix,'filepath to 3to5.9 DO errors data'),
-                    '1to2' = saveRDS(do_fix,'filepath to 1.5to2.9 DO errors data'),
+                    #'18to20' = do_fix_18to20,
+                    #'15to17' = saveRDS(do_fix,'filepath to 15to17.9 DO errors data'),
+                    #'13to14' = saveRDS(do_fix,'filepath to 13to14.9 DO errors data'),
+                    #'10to12' = saveRDS(do_fix,'filepath to 10to12.9 DO errors data'),
+                    #'6to9' = saveRDS(do_fix,'filepath to 6to9.9 DO errors data'),
+                    #'3to5' = saveRDS(do_fix,'filepath to 3to5.9 DO errors data'),
+                    #'1to2' = saveRDS(do_fix,'filepath to 1.5to2.9 DO errors data'),
                     'custom' = saveRDS(do_fix,do_fix_custom_filepath),
                     'new' = saveRDS(do_fix, do_fix_export_filepath))
 
