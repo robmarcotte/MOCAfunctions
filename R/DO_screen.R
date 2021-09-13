@@ -230,8 +230,11 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
       combo_fix = combo_fix %>% dplyr::select(-MET_error, -Combo_error, -full_code_combo)
 
-      combo_fix$METs = as.character(format(combo_fix$METs, digits = 2))
-      combo_fix$METs = str_trim(combo_fix$METs, side = 'left')
+      if(age_group != '1to5'){
+
+        combo_fix$METs = as.character(format(combo_fix$METs, digits = 2))
+        combo_fix$METs = str_trim(combo_fix$METs, side = 'left')
+      }
 
       combo_fix$Behavior = as.character(combo_fix$Behavior)
       combo_fix$Modifier_2 = as.character(combo_fix$Modifier_2)
@@ -299,6 +302,8 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
                     #'1to2' = saveRDS(do_fix,'filepath to 1.5to2.9 DO errors data'),
                     'custom' = saveRDS(do_fix,do_fix_custom_filepath),
                     'new' = saveRDS(do_fix, do_fix_export_filepath))
+
+
 
   }
 }
