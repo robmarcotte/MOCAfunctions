@@ -230,8 +230,11 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
       combo_fix = combo_fix %>% dplyr::select(-MET_error, -Combo_error, -full_code_combo)
 
-      combo_fix$METs = as.character(format(combo_fix$METs, digits = 2))
-      combo_fix$METs = str_trim(combo_fix$METs, side = 'left')
+      if(age_group != '1to5'){
+
+        combo_fix$METs = as.character(format(combo_fix$METs, digits = 2))
+        combo_fix$METs = str_trim(combo_fix$METs, side = 'left')
+      }
 
       combo_fix$Behavior = as.character(combo_fix$Behavior)
       combo_fix$Modifier_2 = as.character(combo_fix$Modifier_2)
@@ -241,6 +244,19 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
       combo_fix$Behavior_Compendium_MET = as.character(combo_fix$Behavior_Compendium_MET)
       combo_fix$Activity_Compendium_MET = as.character(combo_fix$Activity_Compendium_MET)
       combo_fix$Error_Present = as.character(combo_fix$Error_Present)
+
+      error_indicator = combo_fix %>% dplyr::select(Behavior, Modifier_2, METs, Error_Present, Reason) %>%
+        dplyr::rename(Modifier2 = Modifier_2, Modifier1 = METs) %>% dplyr::filter(str_detect(Reason, 'Behav/Act Combo'))
+
+      do_data = left_join(do_data, error_indicator)
+      noldus_errors = do_data %>% filter(Error_Present == 1)
+
+      if(nrow(noldus_errors)>0){
+        View(noldus_errors)
+        screen_done = readline(paste('Finished screening ', basename(do_filepaths[iii]), ' and some errors were found. Please fix them, then press Enter to move on.', sep = ''))
+      }
+
+      combo_fix = combo_fix %>% select(-Time_Relative_sf)
 
       do_fix$Behavior = as.character(do_fix$Behavior)
       do_fix$Modifier_2 = as.character(do_fix$Modifier_2)
@@ -266,18 +282,6 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
         do_fix = bind_rows(do_fix, combo_fix)
       }
 
-    }
-
-
-    error_indicator = do_fix %>% dplyr::select(Behavior, Modifier_2, METs, Error_Present, Reason) %>%
-      dplyr::rename(Modifier2 = Modifier_2, Modifier1 = METs) %>% dplyr::filter(str_detect(Reason, 'Behav/Act Combo'))
-
-    do_data = left_join(do_data, error_indicator)
-    noldus_errors = do_data %>% filter(Error_Present == 1)
-
-    if(nrow(noldus_errors)>0){
-      View(noldus_errors)
-      screen_done = readline(paste('Finished screening ', basename(do_filepaths[iii]), ' and some errors were found. Please fix them, then press Enter to move on.', sep = ''))
     }
 
     print(paste('Finished ', iii, ' of ', length(do_filepaths),sep = ''))
