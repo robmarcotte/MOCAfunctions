@@ -13,8 +13,15 @@ DO_msec_transform <- function(noldus_data){
   DO.data.1 <- noldus_data #read File
   secs <- ceiling(round(DO.data.1$Duration_sf*100)) # round duration of obs to nearest hundredth of a second (hence * 100)
 
-  big.DO.1 <- data.frame(Behavior=as.character(rep(DO.data.1$Behavior,times=secs)),
-                         METs=as.numeric(rep(DO.data.1$METs,times=secs)), stringsAsFactors = F)
+  check_mets = unique(as.numeric(DO.data.1$METs))
+
+  if(length(check_mets) == 1 & is.na(check_mets)){
+    big.DO.1 <- data.frame(Behavior=as.character(rep(DO.data.1$Behavior,times=secs)),
+                           METs=rep(DO.data.1$METs,times=secs), stringsAsFactors = F)
+  } else {
+    big.DO.1 <- data.frame(Behavior=as.character(rep(DO.data.1$Behavior,times=secs)),
+                           METs=as.numeric(rep(DO.data.1$METs,times=secs)), stringsAsFactors = F)
+  }
 
   modifiers = str_which(colnames(noldus_data), 'Modifier')
 
@@ -27,7 +34,12 @@ DO_msec_transform <- function(noldus_data){
     colnames(big.DO.1)[ncol(big.DO.1)] = colnames(noldus_data)[modifiers[i]]
   }
 
-  big.DO.1$MET.level <- as.character(cut(as.numeric(big.DO.1$METs),breaks=c(0,1.5,3,6,Inf),right=F,labels=c("Sed","Light","Mod","Vig")))
+  if(length(check_mets) == 1 & is.na(check_mets)){
+    big.DO.1$MET.level = big.DO.1$METs
+  } else {
+    big.DO.1$MET.level <- as.character(cut(as.numeric(big.DO.1$METs),breaks=c(0,1.5,3,6,Inf),right=F,labels=c("Sed","Light","Mod","Vig")))
+  }
+
 
   return(big.DO.1)
 
