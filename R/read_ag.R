@@ -9,7 +9,7 @@
 #' @param parse_timestamp Binary indicator (T/F) of whether the Timestamp should be separated into Date and Time columns. For larger files, this extends the read and return time.
 #'
 #'
-read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, calibration_file, parse_timestamp = T){
+read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, calibration_file, parse_timestamp = F){
 
   check_data = fread(filepath,header = F,skip = 10, nrows = 1)[1,]
   if(is.numeric(check_data[1,])){
@@ -105,12 +105,12 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
 
 
   if(parse_timestamp == T){
-    file_data = cbind(filename = basename(filepath),
+    new_data = cbind(filename = basename(filepath),
                       Timestamp = Timestamp,
                       Date = lubridate::date(Timestamp),
                       Time = format(Timestamp, format = "%H:%M:%S"),
                       file_data)
-    colnames(file_data) = c('Filename','Timestamp','Date','Time',colnames(file_data))
+    colnames(new_data) = c('Filename','Timestamp','Date','Time',colnames(file_data))
 
   } else {
     file_data = cbind(filename = basename(filepath),
