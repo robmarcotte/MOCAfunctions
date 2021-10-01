@@ -30,7 +30,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
   }
 
   for(iii in 1:n_filepaths){
-
+    print(paste0('Screening File (', do_filepaths[iii], ')'))
     noldus_data = DO_descriptives(do_filepaths[iii])
 
     # Custom DO typo fixes specific to MOCA Cohort Noldus Templates
