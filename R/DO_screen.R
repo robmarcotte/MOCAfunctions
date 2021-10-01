@@ -43,7 +43,6 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
                         METs = Modifier_2,
                         Modifier_2 = Modifier_3,
                         Modifier_3 = Modifier_4)
-
              }
            },
            '10to12' = {},
