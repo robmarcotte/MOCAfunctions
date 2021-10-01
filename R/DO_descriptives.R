@@ -24,6 +24,15 @@ DO_descriptives = function(noldus_data, column_METs = 'Modifier_1', read_first =
   noldus_data = noldus_data[,important_names]
   colnames(noldus_data) = names
 
+  # Add a check to see if METs column was properly assigned. In the 13to14 cohort, some were coded with a bad template resulting in None or NA values under the METs column
+  if('None' %in% unique(noldus_data$METs)){
+    noldus_data = noldus_data %>% select(-METs) %>%
+      rename(Behavior = Behavior,
+             METs = Modifier_2,
+             Modifier_2 = Modifier_3,
+             Modifier_3 = Modifier_4)
+  }
+
   return(noldus_data)
 
 }

@@ -162,7 +162,6 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
       new_combos_index = which((coded_combos %in% existing_combos) == F)
     }
 
-
     if(length(new_combos_index) >0){
       new_combos= coded_combos[new_combos_index]
 
