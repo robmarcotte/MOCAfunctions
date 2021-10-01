@@ -178,7 +178,6 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
               met_fix = readline(paste('File ', iii, ' of ', length(do_filepaths),': Entry needs to be Sed, Light, Mod, or Vig. Enter the proper MET value for the DO combination above: ', sep = ''))
             }
           }
-
           need_to_screen$MET_Fix[i] = met_fix
         }
 
