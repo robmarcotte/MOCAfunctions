@@ -32,7 +32,6 @@ DO_descriptives = function(noldus_data, column_METs = 'Modifier_1', read_first =
              Modifier_2 = Modifier_3,
              Modifier_3 = Modifier_4)
   }
-
   return(noldus_data)
 
 }
