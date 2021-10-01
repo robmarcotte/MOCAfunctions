@@ -330,6 +330,17 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
         do_fix = bind_rows(do_fix, combo_fix)
       }
 
+    } else {
+      # Apply the DO_Fix dataframe to the noldus data to see if there are any Behav/Act combo errors that need to be fixed
+      do_data_withfixes = left_join(do_data,
+                                    do_fix %>% select(Behavior, Modifier_2, METs, Error_Present:MET_Fix) %>% rename(Modifier2 = Modifier_2, Modifier1 = METs))
+
+      behavact_errors = do_data_withfixes %>% dplyr::filter(Reason == 'Behav/Act Combo')
+
+      if(nrow(behavact_errors)>0){
+        View(behavact_errors)
+        screen_done = readline(paste('Finished screening ', basename(do_filepaths[iii]), ' and some errors were found. Please fix them, then press Enter to move on.', sep = ''))
+      }
     }
 
     print(paste('Finished ', iii, ' of ', length(do_filepaths),sep = ''))
