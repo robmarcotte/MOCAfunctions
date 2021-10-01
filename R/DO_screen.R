@@ -327,8 +327,6 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
     print(paste('Finished ', iii, ' of ', length(do_filepaths),sep = ''))
 
-
-
   }
 
   # Update the DO_fix dataframe
@@ -350,7 +348,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
 
   }
-  print('Finished Screening the following files. Please move them to the final DO location.')
+  print('Finished Screening the following files:')
   print(do_filepaths)
 }
 
