@@ -21,11 +21,10 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix, age_group = c('18to20','1
            }
 
            # Fix the activity type Slow Walking to be lowercase "W". Makes it so that when we account for template MET errors for this age group they don't get confused with Walking due to case sensitivity
-           noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Slow Walking (2.9)', replacement = 'Slow walking (2.9)')
+           noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Slow Walking', replacement = 'Slow walking')
 
            # Some templates have Walking (Slow) as the activity type. Change it to Slow walking (2.9) for consistency
-           noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Walking (Slow) (2.9)', replacement = 'Slow walking (2.9)')
-
+           noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Walking \\(Slow\\)', replacement = 'Slow walking')
 
          },
          '10to12' = {},
