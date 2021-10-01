@@ -56,8 +56,6 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
              # Some templates have Walking (Slow) as the activity type. Change it to Slow walking (2.9) for consistency
              noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Walking (Slow) (2.9)', replacement = 'Slow walking (2.9)')
 
-
-
            },
            '10to12' = {},
            '6to9' = {},
