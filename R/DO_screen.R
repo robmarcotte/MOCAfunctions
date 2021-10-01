@@ -134,13 +134,13 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
              do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Jumping'), '4.7', do_data$Behavior_Compendium_MET)
 
              # Some old templates had wrong Activitry Type MET values, thus they need to be fixed
-             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Basketball (Shooting and Retrieving Ball without Stopping)'), '5.2', do_data$Behavior_Compendium_MET)
-             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Computer Work'), '1.2', do_data$Behavior_Compendium_MET)
-             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Jumping'), '4.7', do_data$Behavior_Compendium_MET)
-             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Running'), '8.7, 11.0', do_data$Behavior_Compendium_MET)
-             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Reading'), '1.1', do_data$Behavior_Compendium_MET)
-             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Walking'), '4.7', do_data$Behavior_Compendium_MET)
-             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Writing'), '1.3', do_data$Behavior_Compendium_MET)
+             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Basketball (Shooting and Retrieving Ball without Stopping)'), '5.2', do_data$Behavior_Compendium_MET)
+             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Computer Work'), '1.2', do_data$Activity_Compendium_MET)
+             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Jumping'), '4.7', do_data$Activity_Compendium_MET)
+             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Running'), '8.7, 11.0', do_data$Activity_Compendium_MET)
+             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Reading'), '1.1', do_data$Activity_Compendium_MET)
+             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Walking'), '4.7', do_data$Activity_Compendium_MET)
+             do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Writing'), '1.3', do_data$Activity_Compendium_MET)
            },
            '10to12' = {
              # Some old templates had wrong Behavior MET values, thus they need to be fixed
