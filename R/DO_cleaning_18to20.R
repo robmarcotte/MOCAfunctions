@@ -8,13 +8,29 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix, age_group = c('18to20','1
          '18to20' = {
            noldus_data$Behavior = str_replace(noldus_data$Behavior, pattern = 'WalkLoad 4.5', replacement = 'WalkLoad (4.5')
            noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Carrying Small Child 2.3\\) ', replacement = 'Carrying Small Child (2.3)')},
-         '15to17.9' = {
+         '15to17' = {
            noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Active Video Games (2.4. 5.9)', replacement = 'Active Video Games (2.4, 5.9)')},
-         '13to14.9' = {},
-         '10to12.9' = {},
-         '6to9.9' = {},
-         '3to5.9' = {},
-         '1.5to2.9' = {})
+         '13to14' = {
+           # Some templates have a METS modifier even though it was never coded. Fix the colnames so WBM = Behavior; METs = Modifier_1, Activity Type = Modifier_2, Locomotion = Modifier_3
+           if('None' %in% unique(noldus_data$METs)){
+             noldus_data = noldus_data %>% select(-METs) %>%
+               rename(Behavior = Behavior,
+                      METs = Modifier_2,
+                      Modifier_2 = Modifier_3,
+                      Modifier_3 = Modifier_4)
+           }
+
+           # Fix the activity type Slow Walking to be lowercase "W". Makes it so that when we account for template MET errors for this age group they don't get confused with Walking due to case sensitivity
+           noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Slow Walking (2.9)', replacement = 'Slow walking (2.9)')
+
+           # Some templates have Walking (Slow) as the activity type. Change it to Slow walking (2.9) for consistency
+           noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Walking (Slow) (2.9)', replacement = 'Slow walking (2.9)')
+
+
+         },
+         '10to12' = {},
+         '6to9' = {},
+         '1to5' = {})
 
 
   if(age_group != '1to5'){
