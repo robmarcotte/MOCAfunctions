@@ -9,7 +9,8 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
                      age_group = c('18to20','15to17','13to14','10to12','6to9','1to5'),
                      do_fix_custom_filepath, do_fix_export_filepath,
                      do_screen = c('interactive','.csv'),
-                     do_fix_update = c(TRUE, FALSE)){
+                     do_fix_update = TRUE,
+                     max_file_batch = NULL){
 
   do_fix = switch(do_fix_reference,
                   '18to20' = do_fix_18to20,
@@ -21,9 +22,14 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
                   'custom' = readRDS(do_fix_custom_filepath),
                   'new' = 'create_new')
 
-  file_counter = 0
+  if(is.null(max_file_batch)){
+    n_filepaths = do_filepaths
+  } else {
+    n_filepaths = max_file_batch
+    do_filepaths = do_filepaths[1:n_filepaths]
+  }
 
-  for(iii in 1:length(do_filepaths)){
+  for(iii in 1:n_filepaths){
 
     noldus_data = DO_descriptives(do_filepaths[iii])
 
@@ -322,44 +328,11 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
     print(paste('Finished ', iii, ' of ', length(do_filepaths),sep = ''))
 
 
-    if(file_counter <5){
-      file_counter = file_counter+1
-    } else {
-      file_counter = 0
 
-      if(do_fix_update == T & (do_fix_reference == 'custom' | do_fix_reference == 'new')){
-        print('Processed 5 files, updating the DO_fix reference...')
-
-        do_fix = do_fix %>% arrange(Behavior, Modifier_2)
-
-        # Need to fix this later since the internal DO fix data frames shouldn't be rewritten and any new do_fix dataframes should be exported to a custom filepath
-        do_fix = switch(do_fix_reference,
-                        #'18to20' = do_fix_18to20,
-                        #'15to17' = saveRDS(do_fix,'filepath to 15to17.9 DO errors data'),
-                        #'13to14' = saveRDS(do_fix,'filepath to 13to14.9 DO errors data'),
-                        #'10to12' = saveRDS(do_fix,'filepath to 10to12.9 DO errors data'),
-                        #'6to9' = saveRDS(do_fix,'filepath to 6to9.9 DO errors data'),
-                        #'3to5' = saveRDS(do_fix,'filepath to 3to5.9 DO errors data'),
-                        #'1to2' = saveRDS(do_fix,'filepath to 1.5to2.9 DO errors data'),
-                        'custom' = saveRDS(do_fix,do_fix_custom_filepath),
-                        'new' = saveRDS(do_fix, do_fix_export_filepath))
-
-        do_fix = switch(do_fix_reference,
-                        '18to20' = do_fix_18to20,
-                        '15to17' = do_fix_15to17,
-                        '13to14' = readRDS('filepath to 13to14.9 DO errors data'),
-                        '10to12' = readRDS('filepath to 10to12.9 DO errors data'),
-                        '6to9' = readRDS('filepath to 6to9.9 DO errors data'),
-                        '1to5' = readRDS('filepath to 1to5.9 DO errors data'),
-                        'custom' = readRDS(do_fix_custom_filepath),
-                        'new' = 'create_new')
-
-      }
-    }
   }
 
+  # Update the DO_fix dataframe
   if(do_fix_update == T & (do_fix_reference == 'custom' | do_fix_reference == 'new')){
-    print('Finished the files, updating the DO_fix reference...')
 
     do_fix = do_fix %>% arrange(Behavior, Modifier_2)
 
@@ -377,7 +350,8 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
 
   }
-
+  print('Finished Screening the following files. Please move them to the final DO location.')
+  print(do_filepaths)
 }
 
 
