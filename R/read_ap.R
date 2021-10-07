@@ -37,6 +37,7 @@ read_ap = function(activpal_filepath, raw_data = F, parse_timestamp = F, epoch =
 
       # change first timestamp to account for offset
       data$Timestamp[1] = data$Timestamp[1]-(epoch-offset)
+
     }
   } else {
     data =activpalProcessing::activpal.file.reader(activpal_filepath)
