@@ -13,6 +13,7 @@
 read_ap = function(activpal_filepath, raw_data = F, parse_timestamp = F, epoch = NA, samp_freq = 20){
 
   if(!is.na(epoch)){
+
     data =activpalProcessing::activpal.file.reader(activpal_filepath)
     data = activpalProcessing::second.by.second(data)
     data = data %>% dplyr::rename(cumulative.steps = steps) %>% dplyr::mutate(steps = cumulative.steps-dplyr::lag(cumulative.steps))
@@ -20,22 +21,23 @@ read_ap = function(activpal_filepath, raw_data = F, parse_timestamp = F, epoch =
     data = data %>% dplyr::rename(Timestamp =time) %>% dplyr::mutate(Timestamp = ymd_hms(Timestamp)) %>%
       dplyr::mutate(ap.posture = factor(ap.posture, levels = c(0,1,2,2.1, 3.1, 3.2, 4, 5), labels = c('sedentary','standing','stepping','cycling','primary lying','secondary lying','non-wear','travelling')))
 
-    offset = epoch-(second(data$Timestamp[1])%%epoch)
+    if(epoch != 1){
+      offset = epoch-(second(data$Timestamp[1])%%epoch)
 
-    data$index = c(rep(1, times = offset), rep(seq(2, ceiling(nrow(data)/epoch)), each = epoch)[1:(nrow(data)-offset)])
+      data$index = c(rep(1, times = offset), rep(seq(2, ceiling(nrow(data)/epoch)), each = epoch)[1:(nrow(data)-offset)])
 
-    data = data %>% dplyr::rename(ap.posture_old = ap.posture) %>%
-      dplyr::group_by(index) %>%
-      dplyr::summarize(Timestamp = dplyr::first(Timestamp),
-                       ap.posture = unique(ap.posture_old)[which.max(tabulate(match(ap.posture_old, unique(ap.posture_old))))],
-                       mets = mean(mets, na.rm = T),
-                       met.hours = sum(met.hours, na.rm =T),
-                       steps = sum(steps, na.rm = T),
-                       Perc_ap.posture = mean(ap.posture == ap.posture_old, na.rm = T)) %>% dplyr::select(-index)
+      data = data %>% dplyr::rename(ap.posture_old = ap.posture) %>%
+        dplyr::group_by(index) %>%
+        dplyr::summarize(Timestamp = dplyr::first(Timestamp),
+                         ap.posture = unique(ap.posture_old)[which.max(tabulate(match(ap.posture_old, unique(ap.posture_old))))],
+                         mets = mean(mets, na.rm = T),
+                         met.hours = sum(met.hours, na.rm =T),
+                         steps = sum(steps, na.rm = T),
+                         Perc_ap.posture = mean(ap.posture == ap.posture_old, na.rm = T)) %>% dplyr::select(-index)
 
-    # change first timestamp to account for offset
-    data$Timestamp[1] = data$Timestamp[1]-(epoch-offset)
-
+      # change first timestamp to account for offset
+      data$Timestamp[1] = data$Timestamp[1]-(epoch-offset)
+    }
   } else {
     data =activpalProcessing::activpal.file.reader(activpal_filepath)
     data = data %>% dplyr::rename(Timestamp = time, ap.posture = activity) %>% dplyr::mutate(Timestamp = ymd_hms(Timestamp)) %>%
