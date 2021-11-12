@@ -13,9 +13,11 @@
 #' @example sedsphere(acc_data_raw)
 
 sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch = 15, expand_1sec = F, long_axis = 'y', interpolate = F){
+  detach(package:data.table, unload = TRUE) # causes issues with referencing column indices with a non-numeric character element
+
   # Original method was developed using the sum of VMcorrG values from 100 Hz data. If samp_freq is not 100 Hz, need to interpolate/upsample to proper frequency
   if(samp_freq != 100 & interpolate == T){ # Section is currently bugged with the interpolation -RM 7/19/2021
-
+    warning('Sampling frequency (Sf) is lower than 100 Hz. Interpolating to the proper Sf (this may take a while for larger files)...')
     acc_data_raw = acc_data_raw %>% rename(HEADER_TIME_STAMP =Timestamp,
                                            X = AxisX,
                                            Y = AxisY,
