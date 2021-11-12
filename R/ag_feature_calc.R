@@ -80,6 +80,7 @@ ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80, windo
                                                                                                mean.ang = mean(v.ang, na.rm = T),
                                                                                                sd.ang = sd(v.ang, na.rm = T),
                                                                                                p625 = pow.625(VM),
+                                                                                               p1020 = pow1020(VM),
                                                                                                dfreq = dom.freq(VM),
                                                                                                ratio.df = frac.pow.dom.freq(VM))
 
