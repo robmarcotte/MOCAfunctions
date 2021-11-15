@@ -370,7 +370,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
   }
   print('Finished Screening the following files:')
-  print(do_filepaths)
+  print(do_filepaths[1:max_file_batch])
 }
 
 
