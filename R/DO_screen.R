@@ -330,8 +330,14 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
     } else {
       # Apply the DO_Fix dataframe to the noldus data to see if there are any Behav/Act combo errors that need to be fixed
+      # Make sure types are compatible
+      do_data = do_data %>% mutate(Modifier2 = as.character(Modifier2),
+                                   Modifier1 = as.character(Modifier1))
+
       do_data_withfixes = left_join(do_data,
-                                    do_fix %>% select(Behavior, Modifier_2, METs, Error_Present:MET_Fix) %>% rename(Modifier2 = Modifier_2, Modifier1 = METs))
+                                    do_fix %>% select(Behavior, Modifier_2, METs, Error_Present:MET_Fix) %>%
+                                      rename(Modifier2 = Modifier_2, Modifier1 = METs) %>%
+                                      mutate(Modifier1 = as.character(Modifier1)))
 
       behavact_errors = do_data_withfixes %>% dplyr::filter(Reason == 'Behav/Act Combo')
 
