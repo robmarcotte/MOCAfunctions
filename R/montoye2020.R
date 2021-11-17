@@ -10,19 +10,19 @@
 #'
 #' @example sedsphere(acc_data_raw)
 
-montoye2020 = function(acc_data_counts, sed_cp = 2859, mvpa_cp = 3940, epoch = 60, expand_1sec = F){
+montoye2020 = function(acc_data_counts, sed_cp = 2860, mpa_cp = 3941, vpa = 5613, epoch = 60, expand_1sec = F){
   if(epoch != 60){
     stop("Montoye2020 Cutpoint was developed using 60-second epochs. As of now, cutpoint scaling is not supported.")
   }
 
   acc_data_new = ag_epochr(acc_data_counts, epoch = epoch)
 
-  acc_data_new$Montoye2020 = factor(cut(acc_data_new$VM, breaks = c(-Inf, sed_cp, mvpa_cp, Inf), labels = c('Sedentary','LPA','MVPA'), right = T), levels = c('Sedentary','LPA','MVPA'), labels = c('Sedentary','LPA','MVPA'))
+  acc_data_new$Montoye2020 = factor(cut(acc_data_new$VM, breaks = c(-Inf, sed_cp, mpa_cp, vpa_cp, Inf), labels = c('Sedentary','LPA','MPA','VPA'), right = T), levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA'))
 
   if(expand_1sec == T){
     Montoye2020 = data.frame(Timestamp = acc_data_counts$Timestamp,
                              VM_60sec = rep(acc_data_new$VM, each = epoch)[1:nrow(acc_data_counts)],
-                             Montoye2020 = factor(rep(acc_data_new$Montoye2020, each = epoch), levels =c('Sedentary','LPA','MVPA'), labels =c('Sedentary','LPA','MVPA'))[1:nrow(acc_data_counts)])
+                             Montoye2020 = factor(rep(acc_data_new$Montoye2020, each = epoch), levels =c('Sedentary','LPA','MPA','VPA'), labels =c('Sedentary','LPA','MPA','VPA'))[1:nrow(acc_data_counts)])
     return(Montoye2020)
 
   } else {
