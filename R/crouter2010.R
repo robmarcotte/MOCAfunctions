@@ -34,9 +34,7 @@ crouter2010 = function(acc_data_counts, epoch = 10, expand_1sec = F){
     } else {
       acc_data_new$METs[i] = ifelse(acc_data_new$CV[i] <= 10,
                                  2.294275*(exp(0.00084679*acc_data_new$Axis1[i])),
-                                 0.749395+(0.716431*ln(acc_data_new$Axis1[i]))-
-                                   (0.179874*ln(acc_data_new$Axis1[i]))+
-                                   (0.033173*(ln(acc_data_new$Axis1[i])^3)))
+                                 0.749395+(0.716431*ln(acc_data_new$Axis1[i]))-(0.179874*(ln(acc_data_new$Axis1[i])^2))+(0.033173*(ln(acc_data_new$Axis1[i])^3)))
     }
   }
 
