@@ -48,7 +48,7 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
     colnames(file_data) = c('AxisX','AxisY','AxisZ','VM','VMcorrG')
 
     if(ENMO_calibrate == T){
-      if(nrow(file_data) > 12*60*60*80){
+      if(nrow(file_data) > 12*60*60*frequency){
         C = g.calibrate(filepath,use.temp = F, printsummary=F)
       } else {
         C = list(offset = c(0,0,0),
