@@ -15,7 +15,9 @@
 ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80, window = 15, long_axis = 'y', angle_comp ='Default_Staudenmayer',
                            soj_colname = NA, seconds_colname = NA, inactive_threshold = .00375){
 
-  detach(package:data.table, unload = TRUE) # causes issues with referencing column indices with a non-numeric character element
+  if("data.table" %in% (.packages())){
+    detach(package:data.table, unload = TRUE, force = T) # causes issues with referencing column indices with a non-numeric character element
+  }
 
   n <- dim(ag_data_raw_wrist)[1]
 
