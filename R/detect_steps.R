@@ -9,10 +9,12 @@
 #' @param detrend Boolean indicator to determine if raw VM signal should be detrended by subtracting the mean. Default is TRUE
 #' @param acc_peak_thresh Acceleration threshold (in gravitational units) to identify valid peaks. Wrist = 0.0359; Hip = 0.0267
 #
-#' Library dependencies: tidyverse, signal, zoo, GENEAclassify
+#' Library dependencies: tidyverse, signal, zoo, GENEAclassify, slider
 #'
 
-detect_steps = function(acc_data_raw, samp_freq = 80, method = "Ducharme2021", bpfilt_low = .25, bpfilt_high = 2.5, bw_order= 4, detrend = T, acc_peak_thresh = 0.0359){
+detect_steps = function(acc_data_raw, samp_freq = 80,
+                        method = "Ducharme2021", bpfilt_low = .25, bpfilt_high = 2.5, bw_order= 4, detrend = T, # signal filter parameters
+                        acc_peak_thresh = 0.0359, spurious_step_time = 2, spurious_step_num = NA){ # step count refinment parameters
 
   if(method == 'Ducharme2021'){
     # Detrend the VM signal by removing the mean of the overall time series
@@ -42,7 +44,17 @@ detect_steps = function(acc_data_raw, samp_freq = 80, method = "Ducharme2021", b
 
     # Consider a step detection refinement step that requires either:
     # 1) Minimum duration of stepping to be considered steps OR
-    # 2) Minimum time elapsed between steps to omit erroneous peaks
+    # 2) Minimum time elapsed between steps to omit spurious steps detected
+
+    # Check if the detected steps are part of stepping bout lasting > the min_time_duration
+    # peak_locs_check = rollapply(as.zoo(peak_locs), )
+
+    # Create a running sum of steps
+    acc_data_raw$Step_cumsum = cumsum(acc_data_raw$Step)
+
+    # Determine time since change in step count
+    steps_rle = rle(acc_data_raw$Step_cumsum)
+    acc_data_raw$Step_rle = rep(steps_rle$lengths, times = steps_rle$lengths)[1:nrow(acc_data_raw)]/samp_freq
 
   }
 
@@ -57,7 +69,7 @@ detect_steps = function(acc_data_raw, samp_freq = 80, method = "Ducharme2021", b
   # plot(5000:10000, acc_data_raw$VM_filt[5000:10000], type = 'l')
   # points(peak_locs[which(peak_locs <= 10000 & peak_locs >= 5000)], acc_data_raw$VM_filt[peak_locs[which(peak_locs <= 10000 & peak_locs >= 5000)]], col = 'red', cex = 1.5)
 
-  }
+}
 
 
 
