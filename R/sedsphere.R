@@ -13,18 +13,27 @@
 #' @example sedsphere(acc_data_raw)
 
 sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch = 15, expand_1sec = F, long_axis = 'y', interpolate = F){
-  detach(package:data.table, unload = TRUE) # causes issues with referencing column indices with a non-numeric character element
+  # Check if data.table package is loaded. If so, unload it since it causes issues with column number referencing
+  if("data.table" %in% (.packages())){
+    detach(package:data.table, unload = TRUE) # causes issues with referencing column indices with a non-numeric character element
+  }
 
   # Original method was developed using the sum of VMcorrG values from 100 Hz data. If samp_freq is not 100 Hz, need to interpolate/upsample to proper frequency
   if(samp_freq != 100 & interpolate == T){ # Section is currently bugged with the interpolation -RM 7/19/2021
     warning('Sampling frequency (Sf) is lower than 100 Hz. Interpolating to the proper Sf (this may take a while for larger files)...')
-    acc_data_raw = acc_data_raw %>% rename(HEADER_TIME_STAMP =Timestamp,
+    acc_data_raw = acc_data_raw %>% dplyr::rename(HEADER_TIME_STAMP =Timestamp,
                                            X = AxisX,
                                            Y = AxisY,
                                            Z = AxisZ) %>% select(HEADER_TIME_STAMP, X,Y,Z)
 
     acc_data_raw = MIMSunit::interpolate_signal(acc_data_raw)
     samp_freq = 100
+
+    # Rename columns to default MOCAfunctions naming schema
+    acc_data_raw = acc_data_raw %>% dplyr::rename(Timestamp = HEADER_TIME_STAMP,
+                                                  AxisX = X,
+                                                  AxisY = Y,
+                                                  AxisZ = Z)
   }
 
   if(("VMcorrG" %in% colnames(acc_data_raw)) == F)
@@ -42,6 +51,7 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
                                  mean.z=tapply(acc_data_raw$AxisZ,acc_data_raw$min,mean,na.rm=T),
                                  sum.VMcorrG = tapply(acc_data_raw$VMcorrG,acc_data_raw$min,sum,na.rm=T))
 
+  # Assume that the columns are Timestamp, X, Y, Z
   long_axis_index = switch(long_axis,
                            'x' = 2,
                            'y' = 3,
@@ -54,8 +64,8 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
 
   # 0 = Sedentary, 1 = Upright, 2 = MVPA Activity
   acc_data_raw.sum$SedSphere = ifelse(acc_data_raw.sum$sum.VMcorrG > VMcorrG_mod_15s,2,
-                                      ifelse(acc_data_raw.sum$v.ang < -15,1,0)) # modified from <-15 to >15 because angles below horizontal are 0 to +90deg based on above calculation and device orientation (+1g for arms straight down @ side)
-                                      #ifelse(acc_data_raw.sum$v.ang > 15,1,0)) # modified from <-15 to >15 because angles below horizontal are 0 to +90deg based on above calculation and device orientation (+1g for arms straight down @ side)
+                                      # ifelse(acc_data_raw.sum$v.ang < -15,1,0))
+                                      ifelse(acc_data_raw.sum$v.ang > 15,1,0)) # modified from <-15 to >15 because angles below horizontal are 0 to +90deg based on above calculation and device orientation (+1g for arms straight down @ side)
   acc_data_raw.sum$SedSphere = factor(acc_data_raw.sum$SedSphere, levels = c(0,1,2), labels =c('Sedentary','Upright','MVPA_Activity'))
 
 
