@@ -5,18 +5,18 @@
 #' @param   samp_freq Sampling frequency of the raw accelerometer data. Default is 80 hz
 #' @param   epoch Non-overlapping window size in seconds. Default is 15-seconds
 #' @param   expand_1sec Binary indicator of whether only SedSphere estimates should be returned as a second-by-second vector
-#' @param   long_axis Axis that is parallel to the long axis of the forearm when worn on the wrist. Default is y, and assumes the X, Y, and Z axes are at column positions 2:4, respectively
+#' @param   long_axis Axis that is parallel to the long axis of the forearm when worn on the wrist. x = 2, y = 3, z = 4 assuming that X, Y, and Z axes are at column positions 2:4. Default is y (3)
 #' @param   interpolae Binary indicator of whether raw acceleration signal should be interpolated to 100 Hz. Default is T
 #'
 #' @return  Aggregated data in 15-second epochs with accelerometer values and SedSphere estimate
 #'
 #' @example sedsphere(acc_data_raw)
 
-sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch = 15, expand_1sec = F, long_axis = 'y', interpolate = F){
+sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch = 15, expand_1sec = F, long_axis = 3, interpolate = F){
   # Check if data.table package is loaded. If so, unload it since it causes issues with column number referencing
-  if("data.table" %in% (.packages())){
-    detach(package:data.table, unload = TRUE) # causes issues with referencing column indices with a non-numeric character element
-  }
+  # if("data.table" %in% (.packages())){
+  #   detach(package:data.table, unload = TRUE) # causes issues with referencing column indices with a non-numeric character element
+  # }
 
   # Original method was developed using the sum of VMcorrG values from 100 Hz data. If samp_freq is not 100 Hz, need to interpolate/upsample to proper frequency
   if(samp_freq != 100 & interpolate == T){ # Section is currently bugged with the interpolation -RM 7/19/2021
@@ -53,10 +53,11 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
                                  sum.VMcorrG = tapply(acc_data_raw$VMcorrG,acc_data_raw$min,sum,na.rm=T))
 
   # Assume that the columns are Timestamp, X, Y, Z
-  long_axis_index = switch(long_axis,
-                           'x' = 2,
-                           'y' = 3,
-                           'z' = 4)
+  # long_axis_index = switch(long_axis,
+  #                          'x' = 2,
+  #                          'y' = 3,
+  #                          'z' = 4)
+  long_axis_index = long_axis
 
 
   acc_data_raw.sum$v.ang <- ifelse(acc_data_raw.sum[,long_axis_index] > 1, asin(1)*180/pi,
