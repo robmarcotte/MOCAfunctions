@@ -26,7 +26,6 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
                                            Y = AxisY,
                                            Z = AxisZ) %>% select(HEADER_TIME_STAMP, X,Y,Z)
 
-
     acc_data_raw = MIMSunit::interpolate_signal(acc_data_raw)
     samp_freq = 100
 
