@@ -26,7 +26,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
     n_filepaths = do_filepaths
   } else {
     n_filepaths = max_file_batch
-    do_filepaths = do_filepaths[1:n_filepaths]
+    do_filepaths = do_filepaths[1:pmin(n_filepaths, length(do_filepaths))]
   }
 
   for(iii in 1:n_filepaths){
