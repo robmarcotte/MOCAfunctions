@@ -29,7 +29,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
     do_filepaths = do_filepaths[1:pmin(n_filepaths, length(do_filepaths))]
   }
 
-  for(iii in 1:n_filepaths){
+  for(iii in 1:length(do_filepaths)){
     print(paste0('Screening File (', do_filepaths[iii], ')'))
     noldus_data = DO_descriptives(do_filepaths[iii])
 
@@ -160,8 +160,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
              # Some old templates had wrong Behavior MET values, thus they need to be fixed
              do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Walking'), '4.5', do_data$Behavior_Compendium_MET)
            },
-           '3to5' = {},
-           '1to2' = {})
+           '1to5' = {})
     # Find unique coding combinations
     coded_combos = unique(str_c(do_data$Behavior, do_data$Modifier2, do_data$Modifier1, sep = '_'))
 
