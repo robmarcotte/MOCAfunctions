@@ -10,7 +10,9 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
                      do_fix_custom_filepath, do_fix_export_filepath,
                      do_screen = c('interactive','.csv'),
                      do_fix_update = TRUE,
-                     max_file_batch = NULL){
+                     max_file_batch = NULL,
+                     auto_file_move = T,
+                     output_filepath = NULL){
 
   do_fix = switch(do_fix_reference,
                   '18to20' = do_fix_18to20,
@@ -28,6 +30,8 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
     n_filepaths = max_file_batch
     do_filepaths = do_filepaths[1:pmin(n_filepaths, length(do_filepaths))]
   }
+
+  do_filepaths_status = data.frame(filepaths = do_filepaths, error_free = NA)
 
   for(iii in 1:length(do_filepaths)){
     print(paste0('Screening File (', do_filepaths[iii], ')'))
@@ -343,6 +347,10 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
       if(nrow(behavact_errors)>0){
         View(behavact_errors)
         screen_done = readline(paste('Finished screening ', basename(do_filepaths[iii]), ' and some errors were found. Please fix them, then press Enter to move on.', sep = ''))
+
+        do_filepaths_status$error_free = F
+      } else {
+        do_filepaths_status$error_free = T
       }
     }
 
@@ -368,9 +376,21 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
 
   }
-  print('Finished Screening the following files:')
-  print(do_filepaths[1:max_file_batch])
+
+  if(auto_file_move == T){
+    print('The following were deemed clean and automatically moved to the Final DO Files Storage Location:')
+    do_filepaths_status = do_filepaths_status %>% dplyr::filter(error_free = T)
+
+    file.move(do_filepaths_status$filepaths, output_filepath)
+
+  } else {
+    print('The following files were screened:')
+    print(do_filepaths[1:max_file_batch])
+  }
+
+
 }
+
 
 
 
