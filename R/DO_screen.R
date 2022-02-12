@@ -380,7 +380,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
   if(auto_file_move == T){
     print('The following were deemed clean and automatically moved to the Final DO Files Storage Location:')
-    do_filepaths_status = do_filepaths_status %>% dplyr::filter(error_free = T)
+    do_filepaths_status = do_filepaths_status %>% dplyr::filter(error_free == T)
 
     file.move(do_filepaths_status$filepaths, output_filepath)
 
