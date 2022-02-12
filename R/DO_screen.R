@@ -14,6 +14,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
                      auto_file_move = T,
                      output_filepath = NULL){
 
+
   do_fix = switch(do_fix_reference,
                   '18to20' = do_fix_18to20,
                   '15to17' = do_fix_15to17,
