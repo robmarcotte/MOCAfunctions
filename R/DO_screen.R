@@ -107,10 +107,15 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
 
       # Handle the modifier 2 or activity type variable
       modifier2 = str_split(noldus_data$Modifier_2, ' \\(', simplify = T)[,1]
-      modifier2_compendium = str_split(noldus_data$Modifier_2, ' \\(', simplify = T)[,2]
 
-      # Need to remove close parentheses
-      modifier2_compendium = str_replace(modifier2_compendium, '\\)','')
+      if(ncol(str_split(noldus_data$Modifier_2, ' \\(', simplify = T)) >1){
+        modifier2_compendium = str_split(noldus_data$Modifier_2, ' \\(', simplify = T)[,2]
+
+        # Need to remove close parentheses
+        modifier2_compendium = str_replace(modifier2_compendium, '\\)','')
+      } else {
+        modifier2_compendium = ''
+      }
     }
     do_data = data.frame(Time_Relative_sf = noldus_data$Time_Relative_sf,
                          Behavior = behavior,
