@@ -349,9 +349,9 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
         View(behavact_errors)
         screen_done = readline(paste('Finished screening ', basename(do_filepaths[iii]), ' and some errors were found. Please fix them, then press Enter to move on.', sep = ''))
 
-        do_filepaths_status$error_free = F
+        do_filepaths_status$error_free[iii] = F
       } else {
-        do_filepaths_status$error_free = T
+        do_filepaths_status$error_free[iii] = T
       }
     }
 
@@ -382,7 +382,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
   if(auto_file_move == T){
     print('The following were deemed clean and automatically moved to the Final DO Files Storage Location:')
     do_filepaths_status = do_filepaths_status %>% dplyr::filter(error_free == T)
-
+    print(do_filepaths_status$filepaths)
     file.move(do_filepaths_status$filepaths, output_filepath)
 
   } else {
