@@ -15,6 +15,7 @@ montoye2020 = function(acc_data_counts, sed_cp = 2860, mpa_cp = 3941, vpa_cp = 5
     stop("Montoye2020 Cutpoint was developed using 60-second epochs. As of now, cutpoint scaling is not supported.")
   }
 
+
   acc_data_new = ag_epochr(acc_data_counts, epoch = epoch)
 
   acc_data_new$Montoye2020 = factor(cut(acc_data_new$VM, breaks = c(-Inf, sed_cp, mpa_cp, vpa_cp, Inf), labels = c('Sedentary','LPA','MPA','VPA'), right = T), levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA'))
