@@ -10,7 +10,7 @@
 #'
 #' @example sedsphere(acc_data_raw)
 
-montoye2020 = function(acc_data_counts, sed_cp = 2860, mpa_cp = 3941, vpa = 5613, epoch = 60, expand_1sec = F){
+montoye2020 = function(acc_data_counts, sed_cp = 2860, mpa_cp = 3941, vpa_cp = 5613, epoch = 60, expand_1sec = F){
   if(epoch != 60){
     stop("Montoye2020 Cutpoint was developed using 60-second epochs. As of now, cutpoint scaling is not supported.")
   }
