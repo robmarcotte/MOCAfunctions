@@ -1,8 +1,9 @@
 # read_stepwatch
 #
-# Function to read in stepwatch data
+# Function to read in stepwatch data.
 
 read_stepwatch = function(filepath){
+
   stepwatch_start_full = str_c(read.table(filepath, nrows = 1, skip = 10, stringsAsFactors = F)[2:4], collapse = ' ')
 
   stepwatch_start_date = str_split(stepwatch_start_full, pattern = ' ', simplify =T)[1]
