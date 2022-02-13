@@ -54,7 +54,6 @@ read_stepwatch4 = function(primary_folderpath, bin_select = c('1 Min','15 Sec','
     }
 
   }
-
   return(stepwatch_data)
 
 }

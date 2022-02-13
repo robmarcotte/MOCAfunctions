@@ -33,7 +33,7 @@ read_stepwatch = function(filepath){
                               as.character(minute(stepwatch_data$Full_date)) %>% str_pad(width = 2, side = 'left',pad = '0'),
                               as.character(second(stepwatch_data$Full_date)) %>% str_pad(width = 2, side = 'left',pad = '0'),sep = ':')
 
-  stepwatch_data = stepwatch_data %>% dplyr::select(-Full_date) %>% dplyr::select(Date, Time, Stepwatch_Steps)
+  stepwatch_data = stepwatch_data %>% dplyr::rename(Timestamp = Full_date) %>% dplyr::select(Timestamp, Date, Time, Stepwatch_Steps)
 
   return(stepwatch_data)
 
