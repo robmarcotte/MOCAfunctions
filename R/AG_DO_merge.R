@@ -19,9 +19,9 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
   do_fix = switch(do_fix_reference,
                       '18to20' = do_fix_18to20,
                       '15to17' = do_fix_15to17,
-                      '13to14' = readRDS('filepath to 13to14.9 DO errors data'),
-                      '10to12' = readRDS('filepath to 10to12.9 DO errors data'),
-                      '6to9' = readRDS('filepath to 6to9.9 DO errors data'),
+                      '13to14' = readRDS(do_fix_custom_filepath),
+                      '10to12' = readRDS(do_fix_custom_filepath),
+                      '6to9' = readRDS(do_fix_custom_filepath),
                       '1to5' = readRDS(do_fix_custom_filepath),
                       'custom' = readRDS(do_fix_custom_filepath))
 
@@ -65,7 +65,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
   do_name_append = str_split(basename(do_filepath), ' - ', simplify = T)[,2]
 
   for(aaa in 1:length(ag_filepath)){
-    ag_data = read_ag(ag_filepath[aaa], ENMO_calibrate = T, device_serial_calibrate = T, calibration_file = device_serial_calibrate_df, parse_timestamp = F)
+    ag_data = MOCAfunctions::read_ag(ag_filepath[aaa], ENMO_calibrate = T, device_serial_calibrate = T, calibration_file = device_serial_calibrate_df, parse_timestamp = F)
 
     if(str_detect(ag_filepath[aaa], 'RAW')){
       ag_data = ag_data %>% filter(inrange(Timestamp, noldus_start, noldus_end_raw))

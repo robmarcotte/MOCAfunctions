@@ -12,7 +12,7 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix, age_group = c('18to20','1
            noldus_data$Modifier_2 = str_replace(noldus_data$Modifier_2, pattern = 'Active Video Games (2.4. 5.9)', replacement = 'Active Video Games (2.4, 5.9)')},
          '13to14' = {
            # Some templates have a METS modifier even though it was never coded. Fix the colnames so WBM = Behavior; METs = Modifier_1, Activity Type = Modifier_2, Locomotion = Modifier_3
-           if('None' %in% unique(noldus_data$METs)){
+           if('None' %in% unique(noldus_data$METs)){=
              noldus_data = noldus_data %>% select(-METs) %>%
                rename(Behavior = Behavior,
                       METs = Modifier_2,
