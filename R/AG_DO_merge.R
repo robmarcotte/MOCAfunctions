@@ -19,10 +19,10 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
   do_fix = switch(do_fix_reference,
                       '18to20' = do_fix_18to20,
                       '15to17' = do_fix_15to17,
-                      '13to14' = readRDS(do_fix_custom_filepath),
-                      '10to12' = readRDS(do_fix_custom_filepath),
-                      '6to9' = readRDS(do_fix_custom_filepath),
-                      '1to5' = readRDS(do_fix_custom_filepath),
+                      '13to14' = do_fix_13to14,
+                      '10to12' = do_fix_10to12,
+                      '6to9' = do_fix_6to9,
+                      '1to5' = do_fix_1to5,
                       'custom' = readRDS(do_fix_custom_filepath))
 
 
