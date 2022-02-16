@@ -47,6 +47,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
                                                               Modifier_3 = names(which.max(table(Modifier_3, useNA = 'ifany'))),
                                                               MET.level = names(which.max(table(MET.level, useNA = 'ifany'))))
 
+
   noldus_data$METs = as.character(noldus_data$METs)
 
 
