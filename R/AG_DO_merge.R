@@ -13,7 +13,7 @@
 #' Library dependencies: foreach, doParallel, stringr, lubridate, dplyr, tidyr, data.table, readxl
 
 AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, participant_id,
-                       do_fix_reference = c('18to20','15to17','13to14','10to12','6to9','3to5','1to2','custom'), do_fix_custom_filepath,
+                       do_fix_reference = c('18to20','15to17','13to14','10to12','6to9','1to5','custom'), do_fix_custom_filepath,
                        output_filepath, export = F, device_serial_calibrate_df = NA){
 
   do_fix = switch(do_fix_reference,
