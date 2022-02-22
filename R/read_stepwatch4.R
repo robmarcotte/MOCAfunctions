@@ -16,6 +16,7 @@ read_stepwatch4 = function(primary_folderpath, bin_select = c('1 Min','15 Sec','
 
   }
 
+
   # Determine bin duration in seconds
   bin_duration = as.numeric(str_split(bin_select, ' ', simplify = T)[,1])
 
