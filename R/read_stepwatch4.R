@@ -40,7 +40,7 @@ read_stepwatch4 = function(primary_folderpath, bin_select = c('1 Min','15 Sec','
                                             Timestamp = lubridate::round_date(Timestamp, paste0(bin_duration, ' seconds')))
 
     if(any(is.na(temp_data$Timestamp))){
-      temp_data = temp_data %>% dplyr::mutate(Timestamp_temp = seq(Timestamp[1], (Timestamp[1] + lubridate::days(1)), by = '15 secs')[1:nrow(temp_data)],
+      temp_data = temp_data %>% dplyr::mutate(Timestamp_temp = seq(Timestamp[1], (Timestamp[1] + lubridate::days(1)), by = paste0(bin_duration, ' secs'))[1:nrow(temp_data)],
                                               Timestamp = Timestamp_temp) %>%
         dplyr::select(-Timestamp_temp) %>% dplyr::filter(!is.na(Timestamp),
                                                          !is.na(Stepwatch_Steps))
