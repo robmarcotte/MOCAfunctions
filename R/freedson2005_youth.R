@@ -22,7 +22,7 @@ freedson2005_youth = function(acc_data_counts, age = NA, sed_cp = 150, mpa_cp = 
   acc_data_new$METs = 2.757 + (0.0015*acc_data_new$Axis1) - 0.08957*age - 0.000038*acc_data_new$Axis1*age
 
   acc_data_new$Freedson2005_Youth = factor(ifelse(acc_data_new$Axis1 < sed_cp, 'Sedentary',
-                                                  as.character(cut(acc_data_new$METs, breaks = c(-Inf, 3, 6, Inf), labels = c('Sedentary','LPA','MPA','VPA'), right = F))),
+                                                  as.character(cut(acc_data_new$METs, breaks = c(-Inf, 3, 6, Inf), labels = c('LPA','MPA','VPA'), right = F))),
                                                   levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA'))
 
   if(expand_1sec == T){
