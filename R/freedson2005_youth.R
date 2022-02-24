@@ -16,6 +16,7 @@ freedson2005_youth = function(acc_data_counts, age = NA, sed_cp = 101, mpa_cp = 
     stop("Freedson Youth Cutpoint was developed using 60-second epochs. As of now, cutpoint scaling is not supported.")
   }
 
+
   acc_data_new = ag_epochr(acc_data_counts, epoch = epoch)
 
   acc_data_new$METs = 2.757 + (0.0015*acc_data_new$Axis1) - 0.08957*age - 0.000038*acc_data_new$Axis1*age
