@@ -25,6 +25,7 @@ freedson2005_youth = function(acc_data_counts, age = NA, sed_cp = 150, mpa_cp = 
                                                   as.character(cut(acc_data_new$METs, breaks = c(-Inf, 3, 6, Inf), labels = c('LPA','MPA','VPA'), right = F))),
                                                   levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA'))
 
+
   if(expand_1sec == T){
     Freedson2005_Youth = data.frame(Timestamp = acc_data_counts$Timestamp,
                               Axis1_60sec = rep(acc_data_new$Axis1, each = epoch)[1:nrow(acc_data_counts)],
