@@ -21,6 +21,7 @@ ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80, windo
 
   n <- dim(ag_data_raw_wrist)[1]
 
+
   # Assumes that the Timestamp column is first
   long_axis_index = switch(long_axis,
                            'x' = str_which(colnames(ag_data_raw_wrist), 'AxisX'),
