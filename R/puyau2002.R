@@ -12,7 +12,7 @@
 #' @example sedsphere(acc_data_raw)
 
 puyau2002 = function(acc_data_counts, sed_cp = 800, mpa_cp = 3200, vpa_cp = 8200, epoch = 60, expand_1sec = F){
-  if(epoch != 15){
+  if(epoch != 60){
     stop("Puyau2002 Cutpoint was developed using 60-second epochs. As of now, cutpoint scaling is not supported.")
   }
 

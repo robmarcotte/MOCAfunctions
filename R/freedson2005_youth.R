@@ -11,7 +11,7 @@
 #'
 #' @example sedsphere(acc_data_raw)
 
-freedson2005_youth = function(acc_data_counts, age = NA, sed_cp = 101, mpa_cp = 1952, vpa_cp = 5725, epoch = 60, expand_1sec = F){
+freedson2005_youth = function(acc_data_counts, age = NA, sed_cp = 150, mpa_cp = 1952, vpa_cp = 5725, epoch = 60, expand_1sec = F){
   if(epoch != 60){
     stop("Freedson Youth Cutpoint was developed using 60-second epochs. As of now, cutpoint scaling is not supported.")
   }
@@ -21,8 +21,9 @@ freedson2005_youth = function(acc_data_counts, age = NA, sed_cp = 101, mpa_cp = 
 
   acc_data_new$METs = 2.757 + (0.0015*acc_data_new$Axis1) - 0.08957*age - 0.000038*acc_data_new$Axis1*age
 
-  acc_data_new$Freedson2005_Youth = factor(cut(acc_data_new$METs, breaks = c(-Inf, 1.51, 3, 6, Inf), labels = c('Sedentary','LPA','MPA','VPA'), right = F),
-                                           levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA'))
+  acc_data_new$Freedson2005_Youth = factor(ifelse(acc_data_new$Axis1 < sed_cp, 'Sedentary',
+                                           as.character(cut(acc_data_new$METs, breaks = c(-Inf, 3, 6, Inf), labels = c('Sedentary','LPA','MPA','VPA'), right = F)),
+                                           levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA')))
 
   if(expand_1sec == T){
     Freedson2005_Youth = data.frame(Timestamp = acc_data_counts$Timestamp,

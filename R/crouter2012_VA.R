@@ -18,23 +18,23 @@ crouter2012_VA = function(acc_data_counts, epoch = 10, expand_1sec = F){
   acc_data_new = ag_epochr(acc_data_counts, epoch = epoch)
 
   acc_data_new$METs = NA
-  acc_data_new$cv1 = slide_dbl(acc_data_new$Axis1, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 0, .after = 5, .complete = T)
-  acc_data_new$cv2 = slide_dbl(acc_data_new$Axis1, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 1, .after = 4, .complete = T)
-  acc_data_new$cv3 = slide_dbl(acc_data_new$Axis1, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 2, .after = 3, .complete = T)
-  acc_data_new$cv4 = slide_dbl(acc_data_new$Axis1, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 3, .after = 2, .complete = T)
-  acc_data_new$cv5 = slide_dbl(acc_data_new$Axis1, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 4, .after = 1, .complete = T)
-  acc_data_new$cv6 = slide_dbl(acc_data_new$Axis1, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 5, .after = 0, .complete = T)
+  acc_data_new$cv1 = slide_dbl(acc_data_new$Axis1_LFE, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 0, .after = 5, .complete = T)
+  acc_data_new$cv2 = slide_dbl(acc_data_new$Axis1_LFE, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 1, .after = 4, .complete = T)
+  acc_data_new$cv3 = slide_dbl(acc_data_new$Axis1_LFE, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 2, .after = 3, .complete = T)
+  acc_data_new$cv4 = slide_dbl(acc_data_new$Axis1_LFE, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 3, .after = 2, .complete = T)
+  acc_data_new$cv5 = slide_dbl(acc_data_new$Axis1_LFE, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 4, .after = 1, .complete = T)
+  acc_data_new$cv6 = slide_dbl(acc_data_new$Axis1_LFE, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 5, .after = 0, .complete = T)
 
   acc_data_new = acc_data_new %>% dplyr::rowwise() %>% dplyr::mutate(CV = min(c(cv1, cv2, cv3, cv4, cv5, cv6), na.rm = T))
 
   for(i in 1:nrow(acc_data_new)){
 
-    if(acc_data_new$Axis1[i] <= 25){
+    if(acc_data_new$Axis1_LFE[i] <= 25){
       acc_data_new$METs[i] = 1.0
     } else {
       acc_data_new$METs[i] = ifelse(acc_data_new$CV[i] <= 35,
-                                 1.982*(exp(.00101*acc_data_new$Axis1[i])),
-                                 2.842+(.00288*acc_data_new$Axis1[i]))
+                                 1.982*(exp(.00101*acc_data_new$Axis1_LFE[i])),
+                                 2.842+(.00288*acc_data_new$Axis1_LFE[i]))
     }
   }
 

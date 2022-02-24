@@ -12,7 +12,7 @@
 #' @example sedsphere(acc_data_raw)
 
 treuth2008 = function(acc_data_counts, sed_cp = 51, mpa_cp = 1500, vpa_cp = 2601, epoch = 30, expand_1sec = F){
-  if(epoch != 15){
+  if(epoch != 30){
     stop("Treuth2008 Cutpoint was developed using 30-second epochs. As of now, cutpoint scaling is not supported.")
   }
 
@@ -22,7 +22,7 @@ treuth2008 = function(acc_data_counts, sed_cp = 51, mpa_cp = 1500, vpa_cp = 2601
 
   if(expand_1sec == T){
     Treuth2008 = data.frame(Timestamp = acc_data_counts$Timestamp,
-                              Axis1_30sec = rep(acc_data_new$Axis1, each = epoch)[1:nrow(acc_data_counts)],
+                            Axis1_30sec = rep(acc_data_new$Axis1, each = epoch)[1:nrow(acc_data_counts)],
                             Treuth2008 = factor(rep(acc_data_new$Treuth2008, each = epoch), levels =c('Sedentary','LPA','MPA','VPA'), labels =c('Sedentary','LPA','MPA','VPA'))[1:nrow(acc_data_counts)])
     return(Treuth2008)
 

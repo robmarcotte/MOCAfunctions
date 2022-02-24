@@ -11,20 +11,20 @@
 #'
 #' @example sedsphere(acc_data_raw)
 
-crouter2015_VA = function(acc_data_counts, sed_cp = 36, mpa_cp = 361, vpa_cp = 1130, epoch = 5, expand_1sec = F){
-  if(epoch != 5){
-    stop("crouter2015_VA Cutpoint was developed using 5-second epochs. As of now, cutpoint scaling is not supported.")
+romanzini2014_VM = function(acc_data_counts, sed_cp = 181, mpa_cp = 757, vpa_cp = 1112, epoch = 15, expand_1sec = F){
+  if(epoch != 15){
+    stop("Romanzini2014 Cutpoint was developed using 15-second epochs. As of now, cutpoint scaling is not supported.")
   }
 
   acc_data_new = ag_epochr(acc_data_counts, epoch = epoch)
 
-  acc_data_new$Crouter2015_VA = factor(cut(acc_data_new$Axis1_LFE, breaks = c(-Inf, sed_cp, mpa_cp, vpa_cp, Inf), labels = c('Sedentary','LPA','MPA','VPA'), right = F), levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA'))
+  acc_data_new$Romanzini2014_VM = factor(cut(acc_data_new$VM, breaks = c(-Inf, sed_cp, mpa_cp, vpa_cp, Inf), labels = c('Sedentary','LPA','MPA','VPA'), right = F), levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA'))
 
   if(expand_1sec == T){
-    Crouter2015_VA = data.frame(Timestamp = acc_data_counts$Timestamp,
-                              Axis1_60sec = rep(acc_data_new$Axis1_LFE, each = epoch)[1:nrow(acc_data_counts)],
-                              Crouter2015_VA = factor(rep(acc_data_new$Crouter2015_VA, each = epoch), levels =c('Sedentary','LPA','MPA','VPA'), labels =c('Sedentary','LPA','MPA','VPA'))[1:nrow(acc_data_counts)])
-    return(Crouter2015_VA)
+    Romanzini2014_VM = data.frame(Timestamp = acc_data_counts$Timestamp,
+                              VM_15sec = rep(acc_data_new$VM, each = epoch)[1:nrow(acc_data_counts)],
+                              Romanzini2014_VM = factor(rep(acc_data_new$Romanzini2014_VM, each = epoch), levels =c('Sedentary','LPA','MPA','VPA'), labels =c('Sedentary','LPA','MPA','VPA'))[1:nrow(acc_data_counts)])
+    return(Romanzini2014_VM)
 
   } else {
 
