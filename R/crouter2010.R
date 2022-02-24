@@ -15,6 +15,7 @@ crouter2010 = function(acc_data_counts, epoch = 10, expand_1sec = F){
     stop("Crouter 2010 two-regression was developed using 10-second epochs. As of now, cutpoint scaling is not supported.")
   }
 
+
   acc_data_new = ag_epochr(acc_data_counts, epoch = epoch)
 
   acc_data_new$METs = NA
