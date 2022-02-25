@@ -28,13 +28,13 @@ hildebrand2014_hip = function(enmo_data, sed_cp = 47.4, mpa_cp = 69.1, vpa_cp = 
                                                                          enmo_1min = mean(enmo_1sec, na.rm = T))
 
   # Apply Hildebrand cutpoints
-  enmo_data.min$Intensity = cut(enmo_data.min$enmo_1min, breaks = c(-Inf, sed_cp, mpa_cp, vpa_cp, Inf), labels = c('Sedentary','LPA','MPA','VPA'), right = F)
-  enmo_data.min$Intensity = factor(enmo_data.min$Intensity, levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA'))
+  enmo_data.min$Hildebrand2014_Hip = cut(enmo_data.min$enmo_1min, breaks = c(-Inf, sed_cp, mpa_cp, vpa_cp, Inf), labels = c('Sedentary','LPA','MPA','VPA'), right = F)
+  enmo_data.min$Hildebrand2014_Hip = factor(enmo_data.min$Hildebrand2014_Hip, levels = c('Sedentary','LPA','MPA','VPA'), labels = c('Sedentary','LPA','MPA','VPA'))
 
   if(expand_1sec == T){
-    Hildebrand2014_Intensity = data.frame(Timestamp = enmo_data.secs$Timestamp[1:floor(n/samp_freq)],
-                                          Hildebrand2014_Intensity = factor(rep(enmo_data.min$Intensity, each = epoch), levels =c('Sedentary','LPA','MPA','VPA'), labels =c('Sedentary','LPA','MPA','VPA'))[1:floor(n/samp_freq)])
-    return(Hildebrand2014_Intensity)
+    Hildebrand2014_Hip = data.frame(Timestamp = enmo_data.secs$Timestamp[1:floor(n/samp_freq)],
+                                    Hildebrand2014_Hip = factor(rep(enmo_data.min$Hildebrand2014_Hip, each = epoch), levels =c('Sedentary','LPA','MPA','VPA'), labels =c('Sedentary','LPA','MPA','VPA'))[1:floor(n/samp_freq)])
+    return(Hildebrand2014_Hip)
 
   } else {
 
