@@ -40,7 +40,6 @@ hildebrand2014 = function(enmo_data, sed_cp = 44.8, mpa_cp = 100.6, vpa_cp = 428
 
     return(enmo_data)
 
-
   }
 
 }
