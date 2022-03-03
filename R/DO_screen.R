@@ -168,7 +168,7 @@ DO_screen = function(do_filepaths, do_filescreen_approach = c('sequential'),
            },
            '6to9' = {
              # Some old templates had wrong Behavior MET values, thus they need to be fixed
-             do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Walking'), '4.5', do_data$Behavior_Compendium_MET)
+             do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Walking'), '4.1', do_data$Behavior_Compendium_MET)
            },
            '1to5' = {})
     # Find unique coding combinations
