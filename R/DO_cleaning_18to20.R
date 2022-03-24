@@ -96,39 +96,39 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix, age_group = c('18to20','1
          '18to20' = {},
          '15to17' = {
            # Some old templates had wrong Behavior MET values, thus they need to be fixed
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'WalkLoad'), '4.5', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Walking'), '5.0', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Elliptical'), '5.0', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Skipping'), '9.9', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Crawling'), '6.0', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Jumping'), '4.7', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Dancing'), '4.0', do_data$Behavior_Compendium_MET)},
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'WalkLoad'), '4.5', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Walking'), '5.0', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Elliptical'), '5.0', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Skipping'), '9.9', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Crawling'), '6.0', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Jumping'), '4.7', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Dancing'), '4.0', noldus_data$Behavior_Compendium_MET)},
          '13to14' = {
            # Some old templates had wrong Behavior MET values, thus they need to be fixed
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'WalkLoad'), '4.5', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Walking'), '4.7', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Running'), '8.7, 11.0', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Elliptical'), '5.0', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Skipping'), '9.9', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Crawling'), '6.0', do_data$Behavior_Compendium_MET)
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Jumping'), '4.7', do_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'WalkLoad'), '4.5', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Walking'), '4.7', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Running'), '8.7, 11.0', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Elliptical'), '5.0', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Skipping'), '9.9', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Crawling'), '6.0', noldus_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Jumping'), '4.7', noldus_data$Behavior_Compendium_MET)
 
            # Some old templates had wrong Activitry Type MET values, thus they need to be fixed
-           do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Basketball (Shooting and Retrieving Ball without Stopping)'), '5.2', do_data$Activity_Compendium_MET)
-           do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Computer Work'), '1.2', do_data$Activity_Compendium_MET)
-           do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Jumping'), '4.7', do_data$Activity_Compendium_MET)
-           do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Running'), '8.7, 11.0', do_data$Activity_Compendium_MET)
-           do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Reading'), '1.1', do_data$Activity_Compendium_MET)
-           do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Walking'), '4.7', do_data$Activity_Compendium_MET)
-           do_data$Activity_Compendium_MET = ifelse(str_detect(do_data$Modifier2, 'Writing'), '1.3', do_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Basketball (Shooting and Retrieving Ball without Stopping)'), '5.2', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Computer Work'), '1.2', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Jumping'), '4.7', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Running'), '8.7, 11.0', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Reading'), '1.1', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Walking'), '4.7', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Writing'), '1.3', noldus_data$Activity_Compendium_MET)
          },
          '10to12' = {
            # Some old templates had wrong Behavior MET values, thus they need to be fixed
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Walking'), '4.5', do_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Walking'), '4.5', noldus_data$Behavior_Compendium_MET)
          },
          '6to9' = {
            # Some old templates had wrong Behavior MET values, thus they need to be fixed
-           do_data$Behavior_Compendium_MET = ifelse(str_detect(do_data$Behavior, 'Walking'), '4.1', do_data$Behavior_Compendium_MET)
+           noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Walking'), '4.1', noldus_data$Behavior_Compendium_MET)
          },
          '1to5' = {})
 
