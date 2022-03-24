@@ -89,6 +89,10 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix, age_group = c('18to20','1
   noldus_data$METs = clean_behavior_activity$Modifier1
   noldus_data$Modifier_2 = clean_behavior_activity$Modifier2
 
+  noldus_data = left_join(noldus_data, manual_fix)
+  noldus_data$Modifier_2 = ifelse(noldus_data$Modifier_2 == 'Quiet', noldus_data$Behavior, noldus_data$Modifier_2)
+
+  noldus_data$Omit_me = 0
   # Fix the Behavior_Compendium_METS due to template errors
   # Custom DO typo fixes specific to MOCA Cohort Noldus Templates
   switch(age_group,
@@ -113,13 +117,13 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix, age_group = c('18to20','1
            noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Jumping'), '4.7', noldus_data$Behavior_Compendium_MET)
 
            # Some old templates had wrong Activitry Type MET values, thus they need to be fixed
-           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Basketball (Shooting and Retrieving Ball without Stopping)'), '5.2', noldus_data$Activity_Compendium_MET)
-           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Computer Work'), '1.2', noldus_data$Activity_Compendium_MET)
-           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Jumping'), '4.7', noldus_data$Activity_Compendium_MET)
-           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Running'), '8.7, 11.0', noldus_data$Activity_Compendium_MET)
-           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Reading'), '1.1', noldus_data$Activity_Compendium_MET)
-           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Walking'), '4.7', noldus_data$Activity_Compendium_MET)
-           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier2, 'Writing'), '1.3', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier_2, 'Basketball (Shooting and Retrieving Ball without Stopping)'), '5.2', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier_2, 'Computer Work'), '1.2', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier_2, 'Jumping'), '4.7', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier_2, 'Running'), '8.7, 11.0', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier_2, 'Reading'), '1.1', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier_2, 'Walking'), '4.7', noldus_data$Activity_Compendium_MET)
+           noldus_data$Activity_Compendium_MET = ifelse(str_detect(noldus_data$Modifier_2, 'Writing'), '1.3', noldus_data$Activity_Compendium_MET)
          },
          '10to12' = {
            # Some old templates had wrong Behavior MET values, thus they need to be fixed
@@ -130,11 +134,6 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix, age_group = c('18to20','1
            noldus_data$Behavior_Compendium_MET = ifelse(str_detect(noldus_data$Behavior, 'Walking'), '4.1', noldus_data$Behavior_Compendium_MET)
          },
          '1to5' = {})
-
-  noldus_data = left_join(noldus_data, manual_fix)
-  noldus_data$Modifier_2 = ifelse(noldus_data$Modifier_2 == 'Quiet', noldus_data$Behavior, noldus_data$Modifier_2)
-
-  noldus_data$Omit_me = 0
 
   if(is.na(any(noldus_data$Reason != 0))| any(noldus_data$Reason != 0) == T){
     noldus_data$METs = ifelse(!is.na(noldus_data$Reason) & str_detect(noldus_data$Reason, 'MET') == T,
