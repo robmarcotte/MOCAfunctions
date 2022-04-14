@@ -34,7 +34,7 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix, age_group = c('18to20','1
 
   if(age_group != '1to5'){
     nums = c(unique(str_extract_all(noldus_data$Behavior, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)))
-    if(any(nums == '', na.rm = T)){
+    if(length(nums) >0 & any(nums == '', na.rm = T)){
       nums = nums[-which(nums =='')]
     }
     if(length(nums) == 0)
@@ -48,7 +48,7 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix, age_group = c('18to20','1
     behavior_compendium = str_replace_all(behavior_compendium, ', NA', '')
 
     nums = c(unique(str_extract_all(noldus_data$Modifier_2, paste('\\d\\.\\d', '\\d\\d.\\d', sep = '|'), simplify = T)))
-    if(any(nums == '', na.rm = T)){
+    if(length(nums)>0 & any(nums == '', na.rm = T)){
       nums = nums[-which(nums =='')]
     }
     if(length(nums) == 0)
@@ -73,7 +73,13 @@ DO_cleaning_18to20 = function(noldus_data, manual_fix, age_group = c('18to20','1
 
     # Handle the modifier 2 or activity type variable
     modifier2 = str_split(noldus_data$Modifier_2, ' \\(', simplify = T)[,1]
-    modifier2_compendium = str_split(noldus_data$Modifier_2, ' \\(', simplify = T)[,2]
+    modifier2_compendium = str_split(noldus_data$Modifier_2, ' \\(', simplify = T) # [,2]
+
+    if(ncol(modifier2_compendium) > 1){
+      modifier2_compendium = modifier2_compendium[,2]
+    } else {
+      modifier2_compendium = ''
+    }
 
     # Need to remove close parentheses
     modifier2_compendium = str_replace(modifier2_compendium, '\\)','')
