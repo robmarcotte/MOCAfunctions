@@ -105,17 +105,17 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
 
 
   if(parse_timestamp == T){
-    new_data = cbind(filename = basename(filepath),
-                      Timestamp = Timestamp,
-                      Date = lubridate::date(Timestamp),
-                      Time = format(Timestamp, format = "%H:%M:%S"),
-                      file_data)
+    new_data = dplyr::bind_cols(filename = basename(filepath),
+                                Timestamp = Timestamp,
+                                Date = lubridate::date(Timestamp),
+                                Time = format(Timestamp, format = "%H:%M:%S"),
+                                file_data)
     colnames(new_data) = c('Filename','Timestamp','Date','Time',colnames(file_data))
 
   } else {
-    file_data = cbind(filename = basename(filepath),
-                      Timestamp = Timestamp,
-                      file_data)
+    file_data = dplyr::bind_cols(filename = basename(filepath),
+                                 Timestamp = Timestamp,
+                                 file_data)
 
   }
 
