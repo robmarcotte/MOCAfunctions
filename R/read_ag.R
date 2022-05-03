@@ -18,6 +18,7 @@ read_ag = function(filepath, ENMO_calibrate = T, device_serial_calibrate = T, ca
     file_data = fread(filepath,header = T, skip = 10, stringsAsFactors = F)
   }
 
+
   ag_header = read.csv(filepath, header = F,stringsAsFactors = F, nrows = 10)
   device_serial = str_split(ag_header[2,],'Number: ')[[1]][2]
   start = str_split(ag_header[3,],'Time ')[[1]][2]
