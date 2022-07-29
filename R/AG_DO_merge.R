@@ -16,6 +16,7 @@ AG_DO_merge = function(ag_filepath, do_filepath, timestart, samp_freq = 80, part
                        do_fix_reference = c('18to20','15to17','13to14','10to12','6to9','1to5','custom'), do_fix_custom_filepath,
                        output_filepath, export = F, device_serial_calibrate_df = NA){
 
+
   do_fix = switch(do_fix_reference,
                       '18to20' = do_fix_18to20,
                       '15to17' = do_fix_15to17,
