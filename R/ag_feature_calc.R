@@ -28,7 +28,6 @@ ag_feature_calc = function(ag_data_raw_wrist, participant, samp_freq = 80, windo
   #                          'y' = str_which(colnames(ag_data_raw_wrist), 'AxisY'),
   #                          'z' = str_which(colnames(ag_data_raw_wrist), 'AxisZ'))
 
-
   switch(angle_comp,
          'Rowlands' = {
            ag_data_raw_wrist$v.ang <- (90*asin(ag_data_raw_wrist[,long_axis_index]/ag_data_raw_wrist$VM))/(pi/2)
