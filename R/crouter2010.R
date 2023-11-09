@@ -26,7 +26,7 @@ crouter2010 = function(acc_data_counts, epoch = 10, expand_1sec = F){
   acc_data_new$cv5 = slider::slide_dbl(acc_data_new$Axis1, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 4, .after = 1, .complete = T)
   acc_data_new$cv6 = slider::slide_dbl(acc_data_new$Axis1, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 5, .after = 0, .complete = T)
 
-  acc_data_new = acc_data_new %>% dplyr::rowwise() %>% dplyr::mutate(CV = min(c(cv1, cv2, cv3, cv4, cv5, cv6), na.rm = T),
+  acc_data_new = acc_data_new %>% dplyr::rowwise() %>% dplyr::mutate(CV = min(c(cv1, cv2, cv3, cv4, cv5, cv6), na.rm = T)*100,
                                                                      type = NA)
 
   for(i in 1:nrow(acc_data_new)){
