@@ -26,16 +26,22 @@ crouter2010 = function(acc_data_counts, epoch = 10, expand_1sec = F){
   acc_data_new$cv5 = slider::slide_dbl(acc_data_new$Axis1, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 4, .after = 1, .complete = T)
   acc_data_new$cv6 = slider::slide_dbl(acc_data_new$Axis1, function(x){ifelse(mean(x) == 0, 0, sd(x)/mean(x))}, .before = 5, .after = 0, .complete = T)
 
-  acc_data_new = acc_data_new %>% dplyr::rowwise() %>% dplyr::mutate(CV = min(c(cv1, cv2, cv3, cv4, cv5, cv6), na.rm = T))
+  acc_data_new = acc_data_new %>% dplyr::rowwise() %>% dplyr::mutate(CV = min(c(cv1, cv2, cv3, cv4, cv5, cv6), na.rm = T),
+                                                                     type = NA)
 
   for(i in 1:nrow(acc_data_new)){
 
     if(acc_data_new$Axis1[i] <= 8){
       acc_data_new$METs[i] = 1.0
+      acc_data_new$type[i] = 'Sedentary'
+
     } else {
       acc_data_new$METs[i] = ifelse(acc_data_new$CV[i] <= 10,
                                  2.294275*(exp(0.00084679*acc_data_new$Axis1[i])),
                                  0.749395+(0.716431*log(acc_data_new$Axis1[i]))-(0.179874*(log(acc_data_new$Axis1[i])^2))+(0.033173*(log(acc_data_new$Axis1[i])^3)))
+      acc_data_new$type[i] = ifelse(acc_data_new$CV[i] <= 10,
+                                    'Locomotion',
+                                    'Lifestyle')
     }
   }
 
@@ -50,6 +56,7 @@ crouter2010 = function(acc_data_counts, epoch = 10, expand_1sec = F){
   if(expand_1sec == T){
     Crouter2010 = data.frame(Timestamp = acc_data_counts$Timestamp,
                              METs = rep(acc_data_minute$METs, each = 60)[1:nrow(acc_data_counts)],
+                             Type = factor(rep(acc_data_new$type, each = 10), levels = c('Sedentary','Locomotion','Lifestyle'), labels = c('Sedentary','Locomotion','Intermittent_Lifestyle'))[1:nrow(acc_data_counts)],
                              Crouter2010 = factor(rep(acc_data_minute$Crouter2010, each = 60), levels =c('Sedentary','LPA','MPA','VPA'), labels =c('Sedentary','LPA','MPA','VPA'))[1:nrow(acc_data_counts)])
 
     return(Crouter2010)
