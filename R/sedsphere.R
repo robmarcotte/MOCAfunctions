@@ -6,13 +6,16 @@
 #' @param   epoch Non-overlapping window size in seconds. Default is 15-seconds
 #' @param   expand_1sec Binary indicator of whether only SedSphere estimates should be returned as a second-by-second vector
 #' @param   long_axis Axis that is parallel to the long axis of the forearm when worn on the wrist. x = 2, y = 3, z = 4 assuming that X, Y, and Z axes are at column positions 2:4. Default is y (3)
-#' @param   interpolae Binary indicator of whether raw acceleration signal should be interpolated to 100 Hz. Default is T
+#' @param   interpolate Binary indicator of whether raw acceleration signal should be interpolated to 100 Hz. Default is T
+#' @param   verbose Binary indicator to print status updates to console
+#' @param   day_interpolation Binary indicator to determine if day-level interpolation should be conducted. Helpful for large files
+
 #'
 #' @return  Aggregated data in 15-second epochs with accelerometer values and SedSphere estimate
 #'
 #' @example sedsphere(acc_data_raw)
 
-sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch = 15, expand_1sec = F, long_axis = 3, interpolate = F){
+sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch = 15, expand_1sec = F, long_axis = 3, interpolate = T, verbose = T, day_interpolation = T){
   # Check if data.table package is loaded. If so, unload it since it causes issues with column number referencing
   # if("data.table" %in% (.packages())){
   #   detach(package:data.table, unload = TRUE) # causes issues with referencing column indices with a non-numeric character element
@@ -20,13 +23,39 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
 
   # Original method was developed using the sum of VMcorrG values from 100 Hz data. If samp_freq is not 100 Hz, need to interpolate/upsample to proper frequency
   if(samp_freq != 100 & interpolate == T){ # Section is currently bugged with the interpolation -RM 7/19/2021
-    warning('Sampling frequency (Sf) is lower than 100 Hz. Interpolating to the proper Sf (this may take a while for larger files)...')
-    acc_data_raw = acc_data_raw %>% dplyr::rename(HEADER_TIME_STAMP =Timestamp,
-                                           X = AxisX,
-                                           Y = AxisY,
-                                           Z = AxisZ) %>% select(HEADER_TIME_STAMP, X,Y,Z)
+    if(verbose)
+      print('Sampling frequency (Sf) is lower than 100 Hz. Interpolating to the proper Sf (this may take a while for larger files)...')
 
-    acc_data_raw = MIMSunit::interpolate_signal(acc_data_raw)
+    acc_data_raw = acc_data_raw %>% dplyr::rename(HEADER_TIME_STAMP =Timestamp,
+                                                  X = AxisX,
+                                                  Y = AxisY,
+                                                  Z = AxisZ) %>% select(HEADER_TIME_STAMP, X,Y,Z)
+    if(day_interpolation){
+      print('Interpolating by day to facilitate processing speed and conserve computer memory...')
+      temp = NULL
+      acc_data_raw$Date = lubridate::date(acc_data_raw$HEADER_TIME_STAMP)
+      dates = unique(acc_data_raw$Date)
+      agg_temp = NULL
+
+      for(iii in 1:length(dates)){
+        if(verbose)
+          print(paste0('Interpolating Day ', iii, ' of ', length(dates), '...'))
+        date_indices = which(acc_data_raw$Date == dates[iii])
+        ts_start = acc_data_raw$HEADER_TIME_STAMP[date_indices[1]]
+        ts_end = acc_data_raw$HEADER_TIME_STAMP[date_indices[length(date_indices)]+1] # add two index values to provide complete interpolation for each day
+        temp = MIMSunit::interpolate_signal(acc_data_raw %>% dplyr::select(-Date), st = ts_start, et = ts_end)
+
+        agg_temp = bind_rows(agg_temp, temp[-nrow(temp),])
+        gc()
+      }
+
+      acc_data_raw = agg_temp
+      rm(agg_temp); rm(temp)
+      gc()
+
+    } else {
+      acc_data_raw = MIMSunit::interpolate_signal(acc_data_raw)
+    }
     samp_freq = 100
 
     # Rename columns to default MOCAfunctions naming schema
@@ -36,8 +65,11 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
                                                   AxisZ = Z)
   }
 
-  if(("VMcorrG" %in% colnames(acc_data_raw)) == F)
+  if(("VMcorrG" %in% colnames(acc_data_raw)) == F){
+    if(verbose)
+      print('Computing VM corrected for gravity...')
     acc_data_raw$VMcorrG = abs(sqrt(acc_data_raw$AxisX^2 + acc_data_raw$AxisY^2 + acc_data_raw$AxisZ^2)-1)
+  }
 
   n <- dim(acc_data_raw)[1]
 
@@ -59,6 +91,8 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
   long_axis_index = long_axis
 
 
+  if(verbose)
+    print('Computing device angle and applying SedSphere parameters...')
   acc_data_raw.sum$v.ang <- ifelse(acc_data_raw.sum[,long_axis_index] > 1, asin(1)*180/pi,
                                         ifelse(acc_data_raw.sum[,long_axis_index] < -1, asin(-1)*180/pi,
                                                asin(pmin(pmax(acc_data_raw.sum[,long_axis_index],-1.0),1.0))*180/pi))
