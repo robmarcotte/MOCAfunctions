@@ -36,13 +36,14 @@ sedsphere = function(acc_data_raw, VMcorrG_mod_15s = 489, samp_freq = 80, epoch 
       acc_data_raw$Date = lubridate::date(acc_data_raw$HEADER_TIME_STAMP)
       dates = unique(acc_data_raw$Date)
       agg_temp = NULL
+      # length(dates)
 
       for(iii in 1:length(dates)){
         if(verbose)
           print(paste0('Interpolating Day ', iii, ' of ', length(dates), '...'))
         date_indices = which(acc_data_raw$Date == dates[iii])
         ts_start = acc_data_raw$HEADER_TIME_STAMP[date_indices[1]]
-        ts_end = acc_data_raw$HEADER_TIME_STAMP[date_indices[length(date_indices)]+1] # add two index values to provide complete interpolation for each day
+        ts_end = acc_data_raw$HEADER_TIME_STAMP[pmin(date_indices[length(date_indices)]+1, max(date_indices))] # add two index values to provide complete interpolation for each day
         temp = MIMSunit::interpolate_signal(acc_data_raw %>% dplyr::select(-Date), st = ts_start, et = ts_end)
 
         agg_temp = bind_rows(agg_temp, temp[-nrow(temp),])
